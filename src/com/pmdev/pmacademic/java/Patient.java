@@ -8,8 +8,8 @@ class Patient{
     String addmitno;
     String admissiondate;
     ArrayList<String>patientdata;
-
     String bedid;
+    HashMap<String,String> UpcomingOT;
     HashMap<String,String> UpcomingAppointments;
     HashMap<String,Integer> Medicines;
     HashMap<String,ArrayList<String>>MedicalHistory;
@@ -79,7 +79,11 @@ class Patient{
     public String getAppointment(String date){
         return UpcomingAppointments.get(date);
     }
-    public void ScheduleOT(){
+    public void ScheduleOT(Doctor doc,String date,String otDetails){
+        doc.AddOT(this,date,otDetails);
+        //add to patient ot
+        UpcomingOT.put(date,doc.doctorid);
+
 
 
 

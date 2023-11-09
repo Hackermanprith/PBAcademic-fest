@@ -60,10 +60,23 @@ public class Doctor {
             System.out.println("Doctor is not available on this day");
         }
     }
-    public void AddOT(Patient patient, String date){
-
-
-
+    public void AddOT(Patient patient, String date, String otDetails){
+        if(Patient_Registry.containsKey(date)){
+            if(patient_ot.containsKey(date)){
+                patient_ot.get(date).add(patient);
+                ot.put(date, otDetails);
+                System.out.println("OT details added for patient on "+date);
+            } else {
+                ArrayList<Patient> patientsList = new ArrayList<>();
+                patientsList.add(patient);
+                patient_ot.put(date, patientsList);
+                ot.put(date, otDetails);
+                System.out.println("OT details added for patient on "+date);
+            }
+        }
+        else{
+            System.out.println("Doctor is not available on this day");
+        }
     }
     public void setPerpatientcharge(){
         perpatientcharge = Takeintinp("Set the per patient charge: ");
