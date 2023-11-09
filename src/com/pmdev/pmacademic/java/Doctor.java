@@ -9,13 +9,13 @@ public class Doctor {
     String speaclity;
     String emphno;
     HashMap<String,String> timings;
+    HashMap<String,String> ot;
     double billed;
     double perpatientcharge = 1000;
     int doctordailyLimit = 10;
-
     ArrayList<String> data;
-
     HashMap<String, ArrayList<Patient>> Patient_Registry;
+    HashMap<String,ArrayList<Patient>> patient_ot;
 
 
     Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit){
@@ -54,6 +54,11 @@ public class Doctor {
         else{
             System.out.println("Doctor is not available on this day");
         }
+    }
+    public void AddOT(Patient patient, String date){
+
+
+
     }
 
 }

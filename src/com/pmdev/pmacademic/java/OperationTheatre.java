@@ -31,14 +31,14 @@ public class OperationTheatre extends Rooms {
         return availability.getOrDefault(date, true);
     }
 
-    public void setAvailability(String date, boolean isAvailable) {
+    public void setAvailability(String date, String time,boolean isAvailable) {
         availability.put(date+"_"+time, isAvailable);
     }
 
-    public void scheduleOperation(Operation operation) {
+    public void scheduleOperation(Operation operation,String time) {
         if (isAvailable(operation.getDate())) {
             operations.add(operation);
-            setAvailability(operation.getDate()+"_"+operation.getTime(), false);
+            setAvailability(String.valueOf(operation.getDate()+"_"+operation.getTime()),time,false);
         } else {
             System.out.println("The theatre is not available on " + operation.getDate());
         }

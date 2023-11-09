@@ -2,16 +2,18 @@ package com.pmdev.pmacademic.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 class Patient{
     String addmitno;
     String admissiondate;
     ArrayList<String>patientdata;
+    String roomid = null;
+    String floorid = null;
     String bedid;
-    HashMap<String, String> UpcomingAppointments;
+    HashMap<String,String> UpcomingAppointments;
     HashMap<String,Integer> Medicines;
-    HashMap<String,Integer>LabTests;
-    HashMap<String,String>MedicalHistory;
+    HashMap<String,ArrayList<String>>MedicalHistory;
     HashMap<String,Integer> billable_services;
     Patient(String addmitno,String admissiondate,String name,String phoneno,String bedid,String Adress,String Gurdian,String GurdianPhoneno,String email){
         this.addmitno = addmitno;
@@ -26,8 +28,7 @@ class Patient{
         patientdata.add(Gurdian);
         patientdata.add(GurdianPhoneno);
         Medicines = new HashMap<String,Integer>();
-        LabTests = new HashMap<String,Integer>();
-        MedicalHistory = new HashMap<String,String>();
+        MedicalHistory = new HashMap<>();
         billable_services = new HashMap<String,Integer>();
 
     }
@@ -35,12 +36,8 @@ class Patient{
         Medicines.put(medicationName, quantity);
     }
 
-    public void addLabTest(String testName, int cost) {
-        LabTests.put(testName, cost);
-    }
-
-    public void addMedicalHistory(String date, String history) {
-        MedicalHistory.put(date, history);
+    public void addMedicalHistory(String date, ArrayList<String>history) {
+        MedicalHistory.put(date,  history);
     }
 
     public void addBillableService(String serviceName, int cost) {
@@ -56,7 +53,6 @@ class Patient{
         System.out.println("Gurdian: "+patientdata.get(5));
         System.out.println("Gurdian Phone No: "+patientdata.get(6));
         System.out.println("Medicines: "+Medicines);
-        System.out.println("Lab Tests: "+LabTests);
         System.out.println("Medical History: "+MedicalHistory);
         System.out.println("Billable Services: "+billable_services);
     }
@@ -64,9 +60,6 @@ class Patient{
         double total = 0;
         for (String key : Medicines.keySet()) {
             total += Medicines.get(key);
-        }
-        for (String key : LabTests.keySet()) {
-            total += LabTests.get(key);
         }
         for (String key : billable_services.keySet()) {
             total += billable_services.get(key);
@@ -78,6 +71,16 @@ class Patient{
         room.occupant.get(bedid).occupant = this.addmitno;
         room.occupant.get(bedid).bedid = bedid;
         //change the value of bed
+
+    }
+    public void removeAppointment(String date){
+        UpcomingAppointments.remove(date);
+    }
+    public String getAppointment(String date){
+        return UpcomingAppointments.get(date);
+    }
+    public void ScheduleOT(){
+
 
     }
 
