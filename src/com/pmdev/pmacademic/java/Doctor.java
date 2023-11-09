@@ -2,6 +2,9 @@ package com.pmdev.pmacademic.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import com.pmdev.pmacademic.java.Hospital.*;
+
+import static com.pmdev.pmacademic.java.Hospital.Takeintinp;
 
 public class Doctor {
     String doctorid;
@@ -10,8 +13,10 @@ public class Doctor {
     String emphno;
     HashMap<String,String> timings;
     HashMap<String,String> ot;
-    double billed;
-    double perpatientcharge = 1000;
+    double earned = 0.0;
+    double clinicshare = 0.0;
+
+    double perpatientcharge = 1000.0;
     int doctordailyLimit = 10;
     ArrayList<String> data;
     HashMap<String, ArrayList<Patient>> Patient_Registry;
@@ -58,6 +63,11 @@ public class Doctor {
     public void AddOT(Patient patient, String date){
 
 
+
+    }
+    public void setPerpatientcharge(){
+        perpatientcharge = Takeintinp("Set the per patient charge: ");
+        clinicshare = Takeintinp("Set the clinic share: ");
 
     }
 

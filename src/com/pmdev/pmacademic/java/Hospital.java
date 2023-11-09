@@ -107,10 +107,7 @@ public class Hospital {
             days.add(Takestrinp("Enter the timing for day "+i));
         }
         Doctor_Schedule.put(docname+"_"+docspecialty.substring(0,4),days);
-
-
     }
-
     public void floorPlannerMenu(int floorNo) {
         int n;
         for(int i = 1;i<= floorNo;i++){
@@ -222,7 +219,8 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         if(Doctor_Registry.containsKey(DoctorID)){
             Doctor doc = Doctor_Registry.get(DoctorID);
             doc.AddPatientToSchedule(Date,patient);
-
+            financials.addIncome(String.valueOf("Doctors visit by"+patient.patientdata.get(0)),doc.perpatientcharge,(doc.perpatientcharge-doc.clinicshare),true);
+            doc.earned+=doc.perpatientcharge-doc.clinicshare;
         }
         else{
             System.out.println("Doctor not found");
@@ -307,10 +305,12 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
     }
     public String[] printDocChart(){
         System.out.println("Doctors");
-        System.out.println("Doc id            Docname            Doctor Speciality");
+        System.out.println("--------------------------------------------------");
+        System.out.printf("| %-12s | %-12s | %-12s |\n", "Day", "Timing", "Patient ID");
+        System.out.println("--------------------------------------------------");
         for(String l : Doctor_Registry.keySet()){
             Doctor  doc = Doctor_Registry.get(l);
-            System.out.printf(doc.doctorid + "     ||  "+doc.name + "       ||"+ "    || "+ doc.speaclity);
+            System.out.printf(doc.doctorid + "||"+doc.name + " ||"+ doc.speaclity);
 
         }
         String docname = Takestrinp("Enter the name of the doctor: ");
@@ -372,13 +372,12 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         Doctor doc = Doctor_Registry.get(docid);
         doc.RemovePatientReg(date,pat);
 
-
     }
 
     public void mainMeu(){
         int n = 0;
         do{
-            System.out.print("\033[H\033[2J");
+            System.out.print("\u000c");
             System.out.flush();
             System.out.println("Welcome to the admin menu of "+clinic_managementSystem );
             System.out.println("1. Patient Functions");
@@ -390,7 +389,6 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
              n = Takeintinp("-> ");
              switch (n){
                  case 1:
-
                      PatientMenu();
                      break;
                  case 2:
@@ -420,11 +418,15 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         int n= 0;
         do{
             System.out.println("Welcome to the Financial Menu of "+clinic_managementSystem+": " );
+            double [] arr = financials.quickshotdata();
+            System.out.println("Expenses: "+arr[0]);
+            System.out.println("Income: "+arr[1]);
+            System.out.println("Available balance"+(arr[1]-arr[0]));
             System.out.println("1.Add a new income");
             System.out.println("2.Add a new expense");
             System.out.println("3.Modify Income");
             System.out.println("4.Modify Expense");
-            System.out.println("5.");
+            System.out.println("5.Show Financials");
         }while (n!= 5);
     }
 

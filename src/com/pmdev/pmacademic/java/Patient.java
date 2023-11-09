@@ -8,8 +8,7 @@ class Patient{
     String addmitno;
     String admissiondate;
     ArrayList<String>patientdata;
-    String roomid = null;
-    String floorid = null;
+
     String bedid;
     HashMap<String,String> UpcomingAppointments;
     HashMap<String,Integer> Medicines;
@@ -40,8 +39,9 @@ class Patient{
         MedicalHistory.put(date,  history);
     }
 
-    public void addBillableService(String serviceName, int cost) {
+    public void addBillableService(String serviceName, int cost,Financials financials,boolean doeshaveclexp,double hosexp) {
         billable_services.put(serviceName, cost);
+        financials.addIncome(serviceName,cost,hosexp,doeshaveclexp);
     }
     public void printPatientDetails(){
         System.out.println("Patient Details");
@@ -82,6 +82,8 @@ class Patient{
     public void ScheduleOT(){
 
 
+
     }
+
 
 }
