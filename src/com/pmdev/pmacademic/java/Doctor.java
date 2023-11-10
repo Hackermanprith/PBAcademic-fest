@@ -23,15 +23,16 @@ public class Doctor {
     HashMap<String,ArrayList<Patient>> patient_ot;
 
 
-    Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit){
+    Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit,double clinicshare){
         this.doctorid = doctorid;
         this.name = name;
-        data = new ArrayList<String>();
+        data = new ArrayList<>();
         this.speaclity = speaclity;
         this.emphno = emphno;
         this.data = data;
         this.doctordailyLimit = dlimit;
         this.perpatientcharge = perpatientcharge;
+        this.clinicshare = clinicshare;
         Patient_Registry = new HashMap<>();
     }
     public void AddPatientToSchedule(String date,Patient patient){
@@ -40,14 +41,11 @@ public class Doctor {
         }
         else{
             if(!(Patient_Registry.containsKey(date))){
-                System.out.println("Doctor is not available on this day");
-            }
-            if(Patient_Registry.get(date).size()>doctordailyLimit){
-                System.out.println("Doctor is fully booked on this day");
+               // System.out.println("Doctor is not available on this day");
             }
         }
         System.out.println("Patient Added to the schedule");
-        System.out.println("Your appointment is on "+date+" at "+timings.get(date)+" with Dr."+name+"after"+Patient_Registry.get(date).size()+" patients");
+        System.out.println("Your appointment is on "+date+" with Dr."+name);
         patient.UpcomingAppointments.put(date,this.doctorid);
 
     }
@@ -77,11 +75,6 @@ public class Doctor {
         else{
             System.out.println("Doctor is not available on this day");
         }
-    }
-    public void setPerpatientcharge(){
-        perpatientcharge = Takeintinp("Set the per patient charge: ");
-        clinicshare = Takeintinp("Set the clinic share: ");
-
     }
 
 }

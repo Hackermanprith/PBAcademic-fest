@@ -1,17 +1,14 @@
 package com.pmdev.pmacademic.java;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
+
 public class Hospital {
     static HashMap<String, ArrayList<Rooms>> Floorplan;
-    HashMap<String, Operation> Operation_Registry;
-    HashMap<String,Boolean> hasThings;
-    HashMap<String ,Patient> Patient_Registry;
+    static HashMap<String ,Patient> Patient_Registry;
     HashMap<String,Doctor>Doctor_Registry;
-    HashMap<String,ArrayList<String>> Doctor_Schedule;
+     static Map<String, ArrayList<String>> doctorSchedules;
     HashMap<String,Staff>Staff_Registry;
-    String clinic_managementSystem;
+    String clinic_managementSystem = null;
     Financials financials;
     public static int Takeintinp(String msg) {
         System.out.print(msg);
@@ -33,33 +30,99 @@ public class Hospital {
         return sc.nextLine();
 
     }
+    public static String takesphinp(String msg) {
+        System.out.print(msg);
+        Scanner sc = new Scanner(System.in);
+        String number = "";
+        number = sc.next();
+        System.out.println();
+        if (number.length() != 10) {
+            number = takesphinp("Invalid Input, Try again, please enter a 11 digit number");
+        }
+        return number;
+    }
+    public static void PrintSchedule(String docid){
+        ArrayList<String> docschedules = doctorSchedules.get(docid);
+        for(int i = 1;i<=7;i++){
+            switch (i){
+                case 1:
+                    System.out.println("Monday: "+      doctorSchedules.get(docid).get(0));
+                    break;
+                case 2:
+                    System.out.println("Tuesday: "+      doctorSchedules.get(docid).get(1));
+                    break;
+                case 3:
+                    System.out.println("Wednesday: "+doctorSchedules.get(docid).get(2));
 
+                    break;
+                case 4:
+                    System.out.println("Thursday: "+   doctorSchedules.get(docid).get(3));
+                    break;
+                case 5:
+                    System.out.println("Friday: "+   doctorSchedules.get(docid).get(4));
+                    break;
+                case 6:
+                    System.out.println("Saturday: "+doctorSchedules.get(docid).get(5));
+                    break;
+                case 7:
+                    System.out.println("Sunday: "+ doctorSchedules.get(docid).get(6));
+                    break;
+            }
+        }
+    }
+
+    public void header(String menuname){
+        String text = "Welcome to Clinic Management System \n by Methodist School Dankuni";
+        if(clinic_managementSystem != null){
+            text = "Welcome to the " +menuname+"of "+clinic_managementSystem +" \n by Methodist School Dankuni";
+        }
+
+
+        try {
+            // Get the terminal width using System.console()
+            int terminalWidth = 16;
+
+            // Check if the terminal width is available
+            if (terminalWidth > 0) {
+                int leftPadding = (terminalWidth - text.length()) / 2;
+                String centeredText = String.format("%" + (leftPadding + text.length()) + "s", text);
+
+                System.out.println(centeredText);
+            } else {
+                System.out.println("Unable to determine terminal width.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     Hospital() {
         Patient_Registry = new HashMap<>();
         Doctor_Registry = new HashMap<>();
+        Staff_Registry = new HashMap<>();
         Floorplan = new HashMap<>();
-        hasThings = new HashMap<>();
-        System.out.println("Welcome to the Clinic Management System");
-        System.out.println("                                by MSD");
+        header("Clinic Management System");
         clinic_managementSystem = Takestrinp("Enter the name of the clinic: ");
-        String hasoperation = Takestrinp("Do you have a operation room Y/N: ");
-        hasThings.put("OT",hasoperation.toLowerCase().equals("y"));
-        String haswaiting = Takestrinp("Do you have bed's Y/N: ");
-        hasThings.put("Bed",haswaiting.toLowerCase().equals("y"));
-        haswaiting = Takestrinp("Does the clinic have chamber Y/N: ");
-        hasThings.put("Chambers",haswaiting.toLowerCase().equals("y"));
+        doctorSchedules = new HashMap<>();
         int nooffloors = Takeintinp("Enter the number of floors: ");
         floorPlannerMenu(nooffloors);
-        System.out.print("\033[H\033[2J");
+        System.out.print("\u000c");
         financials = new Financials();
+        System.out.println("Please enter at least 1 doc");
+        RegisterDoctor();
+        System.out.println("Please enter at least 1 staff");
+        RegisterStaff();
+        mainMeu();
+
 
     }
 
     public void RegisterPatient(){
         String name = Takestrinp("Enter the name of the patient: ");
-        String phoneno = Takestrinp("Enter the phone no of the patient: ");
-        String addmitno = name.substring(0).trim()+"_"+phoneno.substring(8,11).trim();
+        String phoneno = takesphinp("Enter the phone no of the patient: ");
+        String addmitno = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
+        printDocChart();
         String RegisterAseatofDoc = Takestrinp("Enter the doctor id to register the patient: ");
+        PrintSchedule(RegisterAseatofDoc);
         String enterthedate = Takestrinp("Enter the date of Registration : ");
         if(Patient_Registry.containsKey(addmitno.toLowerCase())){
             ScheduleAppointment(enterthedate,Patient_Registry.get(addmitno),RegisterAseatofDoc);
@@ -76,16 +139,16 @@ public class Hospital {
             ScheduleAppointment(enterthedate,pat,RegisterAseatofDoc);
         }
 
+
     }
 
-    public static void beds_printing() {
+    public static void printFloorPlan() {
         for (String floorKey : Floorplan.keySet()) {
             ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorKey);
             String[] floorInfo = floorKey.split("_");
             int floor = Integer.parseInt(floorInfo[0]);
 
             System.out.println("Empty beds on Floor " + floor + ":");
-
             for (Rooms room : roomsOnFloor) {
                 for (String bedType : room.occupant.keySet()) {
                     Beds bed = room.occupant.get(bedType);
@@ -94,6 +157,16 @@ public class Hospital {
                     }
                 }
             }
+            System.out.println();
+            System.out.println("Chambers on floor: ");
+            for (Rooms room : roomsOnFloor) {
+                if (room.roomtype.equals("Chamber")) {
+                    Chamber chamber = (Chamber) room;
+                    System.out.println("Chamber " + chamber.getChamberID());
+                }
+            }
+            System.out.println();
+            System.out.println("Operation Theatres on floor: ");
         }
     }
 
@@ -103,37 +176,23 @@ public class Hospital {
             System.out.println("Floor Planner Menu for Floor " +i);
             do {
                 System.out.println("1. Add Rooms");
-                if (hasThings.get("Chambers")) {
-                    System.out.println("2. Add Chamber");
-                }
-                if (hasThings.get("OT")) {
-                    System.out.println("3. Add Operation Room");
-                }
-                System.out.println("4. Exit");
+                System.out.println("2. Add Chamber");
+                System.out.println("3. Exit");
                 n = Takeintinp("Enter your choice: ");
                 switch (n) {
                     case 1:
                         String roomType = Takestrinp("Enter the type of room: ");
                         roomPlanner(i, roomType);
-                        if (hasThings.get("Chambers")) {
+                        break;
+                    case 2:
                             addChamber(i);
-                        } else {
-                            System.out.println("Chambers are not available in this hospital.");
-                        }
                         break;
                     case 3:
-                        if (hasThings.get("OT")) {
-                            addOperationRoom(i);
-                        } else {
-                            System.out.println("Operation rooms are not available in this hospital.");
-                        }
-                        break;
-                    case 4:
-                        break;
+                        return;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-            } while (n != 4);
+            } while (true);
         }
     }
 
@@ -146,31 +205,32 @@ public class Hospital {
         }
 
         int roomID = roomsOnFloor.size() + 1;
-        String addBeds = Takestrinp("Do you want to add beds Y/N: ").toLowerCase();
+            String addBeds = Takestrinp("Do you want to add beds Y/N: ").toLowerCase();
+            int roomCapacity = Takeintinp("Enter the capacity of the room: ");
+            Rooms room = new Rooms(roomID + "_" + roomType, roomType, roomCapacity);
+            roomsOnFloor.add(room);
 
-        int roomCapacity = Takeintinp("Enter the capacity of the room: ");
-        Rooms room = new Rooms(roomID + "_" + roomType, roomType, roomCapacity);
-        roomsOnFloor.add(room);
-
-        if (addBeds.equals("y")) {
-            addBeds(room, roomID, floorNo);
-        }
+            if (addBeds.equals("y")) {
+                addBeds(room, roomID, floorNo);
+            }
     }
-    public void addOperationRoom(int floorNo) {
-        ArrayList<Rooms> theatresOnFloor = Floorplan.get(floorNo + "_OperationRoom");
-        if (theatresOnFloor == null) {
-            theatresOnFloor = new ArrayList<>();
-            Floorplan.put(floorNo + "_OperationRoom", theatresOnFloor);
+  /*  public void addOperationRoom(int floorNo) {
+        if(hasThings.get("OT")) {
+            ArrayList<Rooms> theatresOnFloor = Floorplan.get(floorNo + "_OperationRoom");
+            if (theatresOnFloor == null) {
+                theatresOnFloor = new ArrayList<>();
+                Floorplan.put(floorNo + "_OperationRoom", theatresOnFloor);
+            }
+
+            int theatreID = theatresOnFloor.size() + 1;
+
+            int theatreCapacity = Takeintinp("Enter the capacity of the operation theatre: ");
+            OperationTheatre theatre = new OperationTheatre(theatreID + "_OperationRoom", theatreCapacity);
+            theatresOnFloor.add(theatre);
+
+            System.out.println("Operation theatre added: " + theatre.getTheatreID());
         }
-
-        int theatreID = theatresOnFloor.size() + 1;
-
-        int theatreCapacity = Takeintinp("Enter the capacity of the operation theatre: ");
-        OperationTheatre theatre = new OperationTheatre(theatreID + "_OperationRoom", theatreCapacity);
-        theatresOnFloor.add(theatre);
-
-        System.out.println("Operation theatre added: " + theatre.getTheatreID());
-    }
+    }*/
 
 
     public void addBeds(Rooms room, int roomID, int floorNo) {
@@ -188,6 +248,7 @@ public class Hospital {
         }
     }
     public void addChamber(int floorNo) {
+        System.out.println("Adding chamber on floor " + floorNo);
         ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorNo + "_Chamber");
         if (roomsOnFloor == null) {
             roomsOnFloor = new ArrayList<>();
@@ -217,8 +278,8 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
     }
     public void RegisterDoctor(){
         String name = Takestrinp("Enter the name of the doctor: ");
-        String phoneno = Takestrinp("Enter the phone no of the doctor: ");
-        String doctorid = name.substring(0).trim()+"_"+phoneno.substring(8,11).trim();
+        String phoneno = takesphinp("Enter the phone no of the doctor: ");
+        String doctorid = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
         String speaclity = Takestrinp("Enter the speaclity of the doctor: ");
         String emphno = Takestrinp("Enter the emergency no of the doctor: ");
         ArrayList<String> data = new ArrayList<String>();
@@ -229,17 +290,29 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         data.add(emphno);
         int dlimit = Takeintinp("Enter the daily limit of the doctor: ");
         double perpatientcharge = Takeintinp("Enter the per patient charge of the doctor: ");
-        Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit);
+        double clinicshare = Takeintinp("Enter the clinic share of the doctor: ");
+        if(clinicshare > perpatientcharge){
+            System.out.println("Clinic share cannot be greater than per patient charge");
+            clinicshare = Takeintinp("Enter the clinic share of the doctor: ");
+        }
+        Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit,clinicshare);
         Doctor_Registry.put(doctorid,doc);
+        ArrayList<String>Date = new ArrayList<>();
+        for(int i = 1;i<=7;i++){
+           String n = Takestrinp("Enter the timings for day"+i+"of the week: ");
+           Date.add(n);
+        }
+        doctorSchedules.put(doctorid,Date);
+
         System.out.println("Doctor Registered");
     }
     public void NewBooking(){
         String name = Takestrinp("Enter the name of the patient: ");
-        String phoneno = Takestrinp("Enter the phone no of the patient: ");
-        String addmitno = name.substring(0).trim()+"_"+phoneno.substring(8,11).trim();
-        String[] docdata = printDocChart();
-        printDoctorSchedule(docdata[0],docdata[1]);
+        String phoneno = takesphinp("Enter the phone no of the patient: ");
+        String addmitno = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
+        printDocChart();
         String RegisterAseatofDoc = Takestrinp("Enter the doctor id to register the patient: ");
+        PrintSchedule(RegisterAseatofDoc);
         String enterthedate = Takestrinp("Enter the date of Registration : ");
         if(Patient_Registry.containsKey(addmitno.toLowerCase())){
             ScheduleAppointment(enterthedate,Patient_Registry.get(addmitno),RegisterAseatofDoc);
@@ -250,121 +323,46 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
             String adress = Takestrinp("Enter the adress of the patient: ");
             String email = Takestrinp("Enter the email of the patient: ");
             String Gurdian = Takestrinp("Enter the Gurdian of the patient: ");
-            String GurdianPhoneno = Takestrinp("Enter the Gurdian Phone no of the patient: ");
+            String GurdianPhoneno = takesphinp("Enter the Gurdian Phone no of the patient: ");
             Patient pat = new Patient(addmitno,enterthedate,name,phoneno,null,adress,Gurdian,GurdianPhoneno,email);
             Patient_Registry.put(addmitno,pat);
             ScheduleAppointment(enterthedate,pat,RegisterAseatofDoc);
 
         }
     }
-    public void AddOTSchedule(){
-        String date = Takestrinp("Enter the date of the operation: ");
-        String patientID = Takestrinp("Enter the patient name: ");
-        String patientphone = Takestrinp("Enter the patient phone no: ");
-        String doctorID = Takestrinp("Enter the doctor ID: ");
-        String operationID = Takestrinp("Enter the operation ID: ");
-        String time = Takestrinp("Enter the time of the operation: ");
-        FreeOT(date,time);
-        String theatreID = Takestrinp("Enter theatre id: ");
-        Operation operation = new Operation(patientID, date, operationID, doctorID,time,theatreID);
-        Operation_Registry.put(operationID, operation);
-        patientID = patientID.substring(0).trim()+"_"+patientphone.substring(8,11).trim();
-        Patient pat = Patient_Registry.get(patientID);
-        Doctor doc = Doctor_Registry.get(doctorID);
-        pat.ScheduleOT(doc,date,operationID);
-        System.out.println("Operation scheduled successfully.");
-    }
+ public void printDocChart() {
+     System.out.println("\u000c");
+     header("Doctor View Menu");
+     System.out.println("Doctors");
+     System.out.println("--------------------------------------------------------");
+     System.out.printf("| %-12s | %-20s | %-20s |\n", "ID", "Doctor name", "Doctor Speciality");
+     System.out.println("--------------------------------------------------------");
 
+     for (String doctorId : Doctor_Registry.keySet()) {
+         Doctor doc = Doctor_Registry.get(doctorId);
+         System.out.printf("| %-12s | %-20s | %-20s |\n", doc.doctorid, doc.name, doc.speaclity);
+     }
+     System.out.println("--------------------------------------------------------");
 
-    public void removeOTSchedule(){
-        for(String floorKey:Floorplan.keySet()){
-            ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorKey);
-            for(Rooms room:roomsOnFloor){
-                if(room.roomtype.equals("OperationRoom")){
-                    OperationTheatre theatre = (OperationTheatre) room;
-                    theatre.printOperations();
-                }
-            }
-        }
-        String operationID = Takestrinp("Enter the operation ID: ");
-        if (Operation_Registry.containsKey(operationID)) {
-            Operation operation = Operation_Registry.get(operationID);
-            String date = operation.getDate();
-            String theatreID = operation.getTheatreid();
-            ArrayList<Rooms> theatreFLOOR = Floorplan.get(1);
-            System.out.println("Operation removed successfully.");
-        } else {
-            System.out.println("Operation not found.");
-        }
-    }
-    public String[] printDocChart(){
-        System.out.println("Doctors");
-        System.out.println("--------------------------------------------------");
-        System.out.printf("| %-12s | %-12s | %-12s |\n", "Day", "Timing", "Patient ID");
-        System.out.println("--------------------------------------------------");
-        for(String l : Doctor_Registry.keySet()){
-            Doctor  doc = Doctor_Registry.get(l);
-            System.out.printf(doc.doctorid + "||"+doc.name + " ||"+ doc.speaclity);
+ }
 
-        }
-        String docname = Takestrinp("Enter the name of the doctor: ");
-        String docSpeciality = Takestrinp("Enter the speciality of tbe doctor: ");
-        return new String[]{docname,docSpeciality};
-
-
-    }
-    public void printDoctorSchedule(String doctorName, String specialty) {
-        String doctorKey = doctorName + "_" + specialty.substring(0,4);
-
-        if (Doctor_Schedule.containsKey(doctorKey)) {
-            ArrayList<String> schedule = Doctor_Schedule.get(doctorKey);
-
-            System.out.println("Doctor Schedule for " + doctorName + " (" + specialty + "):");
-            System.out.println("--------------------------------------------------");
-            System.out.printf("| %-12s | %-12s | %-12s |\n", "Day", "Timing", "Patient ID");
-            System.out.println("--------------------------------------------------");
-
-            for (String day : schedule) {
-                System.out.println(day);
-            }
-
-            System.out.println("--------------------------------------------------");
-            System.out.println();
-        } else {
-            System.out.println("Doctor not found or schedule not available.");
-        }
-    }
-    public void FreeOT(String date,String time){
-        for(String floorKey:Floorplan.keySet()){
-            ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorKey);
-            for(Rooms room:roomsOnFloor){
-                if(room.roomtype.equals("OperationRoom")){
-                    OperationTheatre theatre = (OperationTheatre) room;
-                    if(theatre.availability.containsKey(date+"_"+time)){
-                        if(theatre.availability.get(date+"_"+time)){
-                            System.out.println("Theatre "+theatre.theatreID+" is available");
-                        }
-                        else{
-                            System.out.println("Theatre "+theatre.theatreID+" is not available");
-                        }
-                    }
-                    else{
-                        System.out.println("Theatre "+theatre.theatreID+" is available");
-                    }
-                }
-            }
-        }
-    }
     public void RemovePatientBooking(){
+        System.out.println("\u000c");
+        header("Patient Removal Menu");
         String name = Takestrinp("Enter the name of the patient: ");
-        String phoneno = Takestrinp("Enter the phone no of the patient: ");
-        String admitno = name.substring(0).trim() +"_"+phoneno.substring(8,11).trim();
+        String phoneno = takesphinp("Enter the phone no of the patient: ");
+        String admitno = name.substring(0).trim() +"_"+phoneno.substring(6,9).trim();
         String date = Takestrinp("Enter the date of the appointment: ");
         Patient pat = Patient_Registry.get(admitno);
-        String docid = pat.getAppointment(date);
-        pat.removeAppointment(docid);
-        Doctor doc = Doctor_Registry.get(docid);
-        doc.RemovePatientReg(date,pat);
+        try{
+            String docid = pat.getAppointment(date);
+            pat.removeAppointment(docid);
+            Doctor doc = Doctor_Registry.get(docid);
+            doc.RemovePatientReg(date,pat);
+        }
+        catch (Exception e){
+            System.out.println("No appointment was there");
+        }
 
     }
 
@@ -373,31 +371,27 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         do{
             System.out.print("\u000c");
             System.out.flush();
-            System.out.println("Welcome to the admin menu of "+clinic_managementSystem );
+            header("Admin Menu");
             System.out.println("1. Patient Functions");
-            System.out.println("2. Staff Functions");
-            System.out.println("3. Management and Infrastructure");
-            System.out.println("4. Financials");
-            System.out.println("5. Export Data");
-            System.out.println("6. Exit");
+            System.out.println("2. Management and Infrastructure");
+            System.out.println("3. Financials");
+            System.out.println("4. Export Data");
+            System.out.println("5. Exit");
              n = Takeintinp("-> ");
              switch (n){
                  case 1:
                      PatientMenu();
                      break;
                  case 2:
-                     //StaffFunctions();
-                     break;
-                 case 3:
                      Management();
                      break;
-                 case 4:
+                 case 3:
                      FinancialsMenu();
                      break;
-                 case 5:
-                     ExportData();
+                 case 4:
+                     System.out.println("This feature is not available yet.");
                      break;
-                 case 6:
+                 case 5:
                      return;
                  default:
                      n = Takeintinp("Enter a number in range 1 and 6:");
@@ -408,6 +402,7 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         while(n!= 6);
     }
     private void FinancialsMenu() {
+        System.out.println("\u000c");
         int n= 0;
         do{
             System.out.println("Welcome to the Financial Menu of "+clinic_managementSystem+": " );
@@ -421,7 +416,7 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
             System.out.println("4.Modify Expense");
             System.out.println("5.Show Financials");
             System.out.println("6.Pay roll");
-            System.out.println("6.Exit");
+            System.out.println("7.Exit");
             n = Takeintinp("->");
             switch (n){
                 case 1:
@@ -462,19 +457,18 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
     }
 
     private void releasepayroll() {
+        System.out.println("\u000c");
         for(Doctor doc:Doctor_Registry.values()){
             System.out.println("Doctor "+doc.name+" has earned "+doc.earned);
             System.out.println("Paying Doctor "+doc.name+" "+doc.earned);
             financials.addExpense(String.valueOf("Paying"+doc.name),doc.earned);
+            doc.earned = 0;
         }
         for(Staff staff:Staff_Registry.values()){
             System.out.println("Staff "+staff.staffname+" has earned "+staff.staffsalary);
             System.out.println("Paying Staff "+staff.staffname+"_"+staff.staffsalary);
             financials.addExpense(String.valueOf("Paying"+staff.staffname),staff.staffsalary);
         }
-    }
-
-    private void ExportData() {
     }
     private void Management() {
         System.out.print("\u000c");
@@ -483,14 +477,13 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
             System.out.println("Welcome to the Management and Infrastructure menu of "+clinic_managementSystem );
             System.out.println("1. Add Doctor");
             System.out.println("2. Add Staff");
-            System.out.println("4. Add Operation Room");
-            System.out.println("4. Add Chamber");
-            System.out.println("5. Add Bed");
-            System.out.println("7. Change Doctor things");
-            System.out.println("8. Change Staff things");
-            System.out.println("9.Remove Doctor");
-            System.out.println("10.Remove staff");
-            System.out.println("6. Exit");
+            System.out.println("3. Add Chamber");
+            System.out.println("4. Change Doctor things");
+            System.out.println("5. Change Staff things");
+            System.out.println("6.Remove Doctor");
+            System.out.println("7.Remove staff");
+            System.out.println("8.Print Floor plan");
+            System.out.println("9. Exit");
             n = Takeintinp("-> ");
             switch (n){
                 case 1:
@@ -500,57 +493,75 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
                     RegisterStaff();
                     break;
                 case 3:
-                    addOperationRoom(1);
-                    break;
-                case 4:
                     addChamber(1);
                     break;
-                case 5:
-                    roomPlanner(1,"Ward");
-                    break;
-                case 6:
-                    return;
-                case 7:
+                case 4:
                     doctorMenu();
                     break;
-                case 8:
+                case 5:
                     staffMenu();
                     break;
-                case 10:
+                case 7:
                     displayStaffMembers();
                     String staffId = Takestrinp("Enter Staff ID to remove: ");
                     Staff staff = findStaffById(staffId);
                     if (staff != null) {
+                        System.out.println("Do you want to pay the staff member Y/N: ");
+                        String choice = Takestrinp("-> ");
+                        if(choice.toLowerCase().equals("y")){
+                            financials.addExpense(String.valueOf("Paying"+staff.staffname),staff.staffsalary);
+                        }
                         Staff_Registry.remove(staffId);
                         System.out.println("Staff member removed successfully.");
                     } else {
                         System.out.println("Staff member not found with ID: " + staffId);
                     }
                     break;
-                case 9:
+                case 6:
                     displayDoctors();
                     String doctorId = Takestrinp("Enter Doctor ID to remove: ");
                     Doctor doctor = findDoctorById(doctorId);
                     if (doctor != null) {
+                        if(doctor.earned > 0){
+                            System.out.println("Do you want to pay the doctor Y/N: ");
+                            String choice = Takestrinp("-> ");
+                            if(choice.toLowerCase().equals("y")){
+                                financials.addExpense(String.valueOf("Paying"+doctor.name),doctor.earned);
+                            }
+                        }
+                        for(String x  : doctor.Patient_Registry.keySet()) {
+                            ArrayList<Patient> pat = doctor.Patient_Registry.get(x);
+                            for (Patient patient : pat) {
+                                patient.removeAppointment(x);
+                                System.out.println("Cancelled appointment for" + patient.patientdata.get(0) + "on " + x);
+                            }
+                        }
                         Doctor_Registry.remove(doctorId);
                         System.out.println("Doctor removed successfully.");
+
+
+
                     } else {
                         System.out.println("Doctor not found with ID: " + doctorId);
                     }
-
-
+                case 8:
+                    printFloorPlan();
+                    break;
+                case 9:
+                    return;
                 default:
                     n = Takeintinp("Enter a number between (1-7): ");
             }
 
         }
-        while (n != 7);
+        while (n != 9);
     }
 
     private void RegisterStaff() {
+        System.out.println("\u000c");
         String name = Takestrinp("Enter the name of the staff: ");
-        String phoneno = Takestrinp("Enter the phone no of the staff: ");
-        String staffid = name.substring(0).trim()+"_"+phoneno.substring(8,11).trim();
+        String phoneno = takesphinp("Enter the phone no of the staff: ");
+        String staffid = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
         String speaclity = Takestrinp("Enter the speaclity of the staff: ");
         String emphno = Takestrinp("Enter the emergency no of the staff: ");
         double x = Takeintinp("Enter the salary of the staff: ");
@@ -567,14 +578,11 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
     }
 
     public void staffMenu() {
+        System.out.println("\u000c");
         Scanner scanner = new Scanner(System.in);
-
-        // Assuming you have a method to display the list of staff members
         displayStaffMembers();
-
         System.out.print("Enter Staff ID to modify: ");
         String staffId = scanner.nextLine();
-
         Staff staff = findStaffById(staffId);
 
         if (staff != null) {
@@ -656,7 +664,8 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         if (doctor != null) {
             int choice;
             do {
-                System.out.println("Doctor Menu:");
+                System.out.print("\u000c");
+                header("Doctor Menu");
                 System.out.println("1. Change Doctor Name");
                 System.out.println("2. Change Speciality");
                 System.out.println("3. Change Phone Number");
@@ -725,8 +734,6 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         return null;
     }
 
-    // Add other hospital-related functions here.
-
 
 
     public void PatientMenu(){
@@ -737,8 +744,9 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
             System.out.println("1.Add Patient");
             System.out.println("2.Schedule Appointment");
             System.out.println("3.Remove Appointment");
-            System.out.println("4.Schedule OT");
-            System.out.println("5.Remove OT");
+            System.out.println("4.Show schedule for doctor");
+            System.out.println("4.Schedule OT(coming soon)");
+            System.out.println("5.Remove OT(coming soon)");
             System.out.println("6. Exit");
             int x = Takeintinp("->");
             switch (x){
@@ -747,12 +755,10 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
                     break;
                 case 2:
                     NewBooking();
+                    break;
                 case 3:
                     RemovePatientBooking();
-                case 4:
-                    AddOTSchedule();
-                case 5:
-                    removeOTSchedule();
+                    break;
                 case 6:
                     return;
                 default:
@@ -762,7 +768,9 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         }
         while (n != 6);
 
+
     }
+
     
 
 }

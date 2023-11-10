@@ -3,24 +3,33 @@ package com.pmdev.pmacademic.java;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-
+///7003360256, 7044783478
 import static com.pmdev.pmacademic.java.Hospital.Takestrinp;
 
 public class Financials {
     HashMap<String, ArrayList<String>> Expenses;
     HashMap<String, ArrayList<String>> Ins;
 
+    Financials(){
+        Expenses = new HashMap<>();
+        Ins = new HashMap<>();
+    }
+
     //add expense method
     public double[] quickshotdata() {
         double expenses = 0.0;
         double income = 0.0;
-        for (String x : Expenses.keySet()) {
-            ArrayList<String> ex = Expenses.get(x);
-            expenses += Double.valueOf(ex.get(0));
-        }
-        for (String k : Ins.keySet()) {
-            ArrayList<String> ex = Expenses.get(k);
-            income += Double.valueOf(ex.get(0));
+        if(Expenses != null && Ins != null){
+            for (String x : Expenses.keySet()) {
+                ArrayList<String> ex = Expenses.get(x);
+                expenses += Double.valueOf(ex.get(1));
+            }
+            for (ArrayList<String>ex : Ins.values()) {
+                income += Double.valueOf(ex.get(1));
+                expenses = expenses + Double.valueOf(ex.get(2));
+            }
+
+
         }
         return new double[]{expenses, income};
     }
@@ -30,12 +39,13 @@ public class Financials {
         int n = rand.nextInt(9999);
         ArrayList<String> data = new ArrayList<>();
         if (hosexp) {
-            data.add(String.valueOf(hospcost));
+            ArrayList<String> dataw = new ArrayList<>();
+            dataw.add(String.valueOf(hospcost));
             Expenses.put(serviceName, data);
         }
         data.add(0, serviceName);
         data.add(1, String.valueOf(cost));
-        data.add(0, String.valueOf(hospcost));
+        data.add(2, String.valueOf(hospcost));
         Ins.put(serviceName+"_"+n, data);
     }
 
@@ -50,6 +60,7 @@ public class Financials {
     }
 
         public void showFinancials() {
+            System.out.println("\u000c");
             System.out.println("------------------------------------------------------------");
             System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
             System.out.println("------------------------------------------------------------");
@@ -57,7 +68,7 @@ public class Financials {
             // Display Income
             for (String incomeName : Ins.keySet()) {
                 ArrayList<String> incomeData = Ins.get(incomeName);
-                System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", incomeName, incomeData.get(0), incomeData.get(1), incomeData.get(2));
+                System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", incomeName, incomeData.get(1), incomeData.get(0), incomeData.get(2));
             }
             System.out.println("------------------------------------------------------------");
             System.out.println();
@@ -72,6 +83,35 @@ public class Financials {
             }
 
             System.out.println("------------------------------------------------------------");
+        }
+        public void showIncomes(){
+            System.out.println("\u000c");
+            System.out.println("-----------------------------------------------------------------------");
+            System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
+            System.out.println("------------------------------------------------------------");
+
+            // Display Income
+            for (String incomeName : Ins.keySet()) {
+                ArrayList<String> incomeData = Ins.get(incomeName);
+                System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", incomeName, incomeData.get(1), incomeData.get(0), incomeData.get(2));
+            }
+            System.out.println("----------------------------------------------------------------");
+
+        }
+        public void showExpense(){
+
+            System.out.println("----------------------------------------------------------------------------------------------");
+            System.out.printf("| %-20s | %-15s | %-15s |\n","Expense ID" ,"Expense name", "Cost Incurred");
+            System.out.println("-----------------------------------------------------------------------------------------------");
+
+            // Display Expenses
+            for (String expenseName : Expenses.keySet()) {
+                ArrayList<String> expenseData = Expenses.get(expenseName);
+                System.out.printf("| %-20s | %-15s | %-15s |\n",expenseName,expenseData.get(0) ,expenseData.get(1), "");
+            }
+
+            System.out.println("------------------------------------------------------------");
+
         }
 
     public void modfiyIncome() {
@@ -120,6 +160,48 @@ public class Financials {
     }
 
     public void modfiyExpense() {
+        showExpense();
+        String serviceId = Takestrinp("Enter the service ID: ");
+        System.out.print("\u000C");
+        ArrayList<String> expense = Expenses.get(serviceId);
+        int n =1;
+        if (expense == null) {
+            System.out.println("Service ID not found");
+            return;
+        }
+        System.out.println("\u000C");
+        System.out.println("------------------------------------------------------------");
+        System.out.printf("| %-20s | %-15s | %-15s |\n","Expense ID" ,"Expense name", "Cost Incurred");
+        System.out.println("------------------------------------------------------------");
+        // Display Expenses
+            ArrayList<String> expenseData = Expenses.get(serviceId);
+            System.out.printf("| %-20s | %-15s | %-15s |\n",serviceId,expenseData.get(0) ,expenseData.get(1), "");
+
+        do{
+            System.out.println("Enter the field you want to modify");
+            System.out.println("1. Service Name");
+            System.out.println("2. Cost Incurred");
+            System.out.println("0. Exit");
+            n = Integer.parseInt(Takestrinp("Enter your choice: "));
+            switch (n){
+                case 1:
+                    String serviceName = Takestrinp("Enter the new service name: ");
+                    expenseData.set(0, serviceName);
+                    break;
+                case 2:
+                    double costIncurred = Double.parseDouble(Takestrinp("Enter the new cost incurred: "));
+                    expenseData.set(1, String.valueOf(costIncurred));
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid choice");
+
+            }
+
+        }while(n!=0);
+
+
     }
 }
 

@@ -27,6 +27,7 @@ class Patient{
         patientdata.add(Gurdian);
         patientdata.add(GurdianPhoneno);
         Medicines = new HashMap<String,Integer>();
+        UpcomingAppointments = new HashMap<>();
         MedicalHistory = new HashMap<>();
         billable_services = new HashMap<String,Integer>();
 

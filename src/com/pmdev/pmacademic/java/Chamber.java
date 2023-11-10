@@ -17,13 +17,6 @@ public class Chamber extends Rooms {
         return chamberID;
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
 
     public void setAvailable(boolean available, String currentDoctorID) {
         this.available = available;

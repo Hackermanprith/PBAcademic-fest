@@ -27,15 +27,4 @@ public class Staff {
         System.out.println("Salary: "+staffsalary);
     }
     //increase salary
-    public void increaseSalary(double amount){
-        staffsalary += amount;
-    }
-    //decrease salary
-    public void decreaseSalary(double amount){
-        staffsalary -= amount;
-    }
-    //change designation
-    public void changeDesignation(String designation){
-        staffdesignation = designation;
-    }
 }
