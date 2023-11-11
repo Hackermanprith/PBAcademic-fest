@@ -520,8 +520,7 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
                         for(String x  : doctor.Patient_Registry.keySet()) {
                             ArrayList<Patient> pat = doctor.Patient_Registry.get(x);
                             for (Patient patient : pat) {
-                                patient.removeAppointment(x);
-                                System.out.println("Cancelled appointment for" + patient.patientdata.get(0) + "on " + x);
+                                patient.removeAppointment(x);System.out.println("Cancelled appointment for" + patient.patientdata.get(0) + "on " + x);
                             }
                         }
                         Doctor_Registry.remove(doctorId);
