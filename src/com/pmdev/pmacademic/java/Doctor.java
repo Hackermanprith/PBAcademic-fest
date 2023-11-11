@@ -36,41 +36,27 @@ public class Doctor {
         Patient_Registry = new HashMap<>();
     }
     public void AddPatientToSchedule(String date,Patient patient){
-        if(Patient_Registry.containsKey(date)&&Patient_Registry.get(date).size()<doctordailyLimit){
-            Patient_Registry.get(date).add(patient);
-        }
-        else{
-            if(!(Patient_Registry.containsKey(date))){
-               // System.out.println("Doctor is not available on this day");
+        try {
+            if (Patient_Registry.containsKey(date) && Patient_Registry.get(date).size() < doctordailyLimit) {
+                Patient_Registry.get(date).add(patient);
+            } else {
+                if (!(Patient_Registry.containsKey(date))) {
+                    // System.out.println("Doctor is not available on this day");
+                }
             }
+            System.out.println("Patient Added to the schedule");
+            System.out.println("Your appointment is on " + date + " with Dr." + name);
+            patient.UpcomingAppointments.put(date, this.doctorid);
         }
-        System.out.println("Patient Added to the schedule");
-        System.out.println("Your appointment is on "+date+" with Dr."+name);
-        patient.UpcomingAppointments.put(date,this.doctorid);
+        catch (Exception e){
+            System.out.println("There is a error ");
+        }
 
     }
     public void RemovePatientReg(String date,Patient patient){
         if(Patient_Registry.containsKey(date)){
             Patient_Registry.get(date).remove(patient);
             patient.UpcomingAppointments.remove(date);
-        }
-        else{
-            System.out.println("Doctor is not available on this day");
-        }
-    }
-    public void AddOT(Patient patient, String date, String otDetails){
-        if(Patient_Registry.containsKey(date)){
-            if(patient_ot.containsKey(date)){
-                patient_ot.get(date).add(patient);
-                ot.put(date, otDetails);
-                System.out.println("OT details added for patient on "+date);
-            } else {
-                ArrayList<Patient> patientsList = new ArrayList<>();
-                patientsList.add(patient);
-                patient_ot.put(date, patientsList);
-                ot.put(date, otDetails);
-                System.out.println("OT details added for patient on "+date);
-            }
         }
         else{
             System.out.println("Doctor is not available on this day");

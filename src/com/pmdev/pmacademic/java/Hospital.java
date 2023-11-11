@@ -13,7 +13,7 @@ public class Hospital {
     public static int Takeintinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
-        int number = 0;
+        int number;
         try {
             number = sc.nextInt();
         } catch (Exception e) {
@@ -33,7 +33,7 @@ public class Hospital {
     public static String takesphinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
-        String number = "";
+        String number;
         number = sc.next();
         System.out.println();
         if (number.length() != 10) {
@@ -42,7 +42,6 @@ public class Hospital {
         return number;
     }
     public static void PrintSchedule(String docid){
-        ArrayList<String> docschedules = doctorSchedules.get(docid);
         for(int i = 1;i<=7;i++){
             switch (i){
                 case 1:
@@ -82,15 +81,10 @@ public class Hospital {
             // Get the terminal width using System.console()
             int terminalWidth = 16;
 
-            // Check if the terminal width is available
-            if (terminalWidth > 0) {
                 int leftPadding = (terminalWidth - text.length()) / 2;
                 String centeredText = String.format("%" + (leftPadding + text.length()) + "s", text);
 
                 System.out.println(centeredText);
-            } else {
-                System.out.println("Unable to determine terminal width.");
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,7 +113,7 @@ public class Hospital {
     public void RegisterPatient(){
         String name = Takestrinp("Enter the name of the patient: ");
         String phoneno = takesphinp("Enter the phone no of the patient: ");
-        String addmitno = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
+        String addmitno = name.trim()+"_"+phoneno.substring(6,9).trim();
         printDocChart();
         String RegisterAseatofDoc = Takestrinp("Enter the doctor id to register the patient: ");
         PrintSchedule(RegisterAseatofDoc);
@@ -129,7 +123,6 @@ public class Hospital {
         }
         else{
             System.out.println("Not Registered");
-            ArrayList<String> patientdata = new ArrayList<String>();
             String adress = Takestrinp("Enter the adress of the patient: ");
             String email = Takestrinp("Enter the email of the patient: ");
             String Gurdian = Takestrinp("Enter the Gurdian of the patient: ");
@@ -214,23 +207,6 @@ public class Hospital {
                 addBeds(room, roomID, floorNo);
             }
     }
-  /*  public void addOperationRoom(int floorNo) {
-        if(hasThings.get("OT")) {
-            ArrayList<Rooms> theatresOnFloor = Floorplan.get(floorNo + "_OperationRoom");
-            if (theatresOnFloor == null) {
-                theatresOnFloor = new ArrayList<>();
-                Floorplan.put(floorNo + "_OperationRoom", theatresOnFloor);
-            }
-
-            int theatreID = theatresOnFloor.size() + 1;
-
-            int theatreCapacity = Takeintinp("Enter the capacity of the operation theatre: ");
-            OperationTheatre theatre = new OperationTheatre(theatreID + "_OperationRoom", theatreCapacity);
-            theatresOnFloor.add(theatre);
-
-            System.out.println("Operation theatre added: " + theatre.getTheatreID());
-        }
-    }*/
 
 
     public void addBeds(Rooms room, int roomID, int floorNo) {
@@ -305,6 +281,18 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
         doctorSchedules.put(doctorid,Date);
 
         System.out.println("Doctor Registered");
+    }
+    public void PrintDocPatients(String docid){
+        Doctor doc = Doctor_Registry.get(docid);
+        for(String date: doc.Patient_Registry.keySet()){
+            ArrayList<Patient> arr = doc.Patient_Registry.get(date);
+            System.out.println("-------------------------------------------------------------------");
+            System.out.printf("| %-12s | %-12s | \n","Date","Patient");
+            System.out.println("-------------------------------------------------------------------");
+            for(Patient pat : arr){
+                System.out.printf("| %-12s | %-20s |",date,pat.patientdata.get(0));
+            }
+        }
     }
     public void NewBooking(){
         String name = Takestrinp("Enter the name of the patient: ");
@@ -672,7 +660,6 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
                 System.out.println("4. Change Per Patient Charge");
                 System.out.println("5. Change Daily Appointment Limit");
                 System.out.println("0. Exit");
-
                 System.out.print("Enter your choice: ");
                 choice = scanner.nextInt();
                 scanner.nextLine(); // Consume the newline character left by nextInt()
@@ -737,7 +724,6 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
 
 
     public void PatientMenu(){
-        int n= 0;
         System.out.print("\u000c");
         do{
             System.out.println("Welcome to the Patient menu of "+clinic_managementSystem );
@@ -762,11 +748,11 @@ public void ScheduleAppointment(String Date,Patient patient,String DoctorID){
                 case 6:
                     return;
                 default:
-                    x = Takeintinp("Enter a number between (1-6): ");
+                    System.out.println("Enter a number");
             }
 
         }
-        while (n != 6);
+        while (true);
 
 
     }

@@ -67,28 +67,12 @@ class Patient{
         }
         System.out.println("Total Bill: "+total);
     }
-    public void AssignABed(String bedid,Rooms room){
-        this.bedid = bedid;
-        room.occupant.get(bedid).occupant = this.addmitno;
-        room.occupant.get(bedid).bedid = bedid;
-        //change the value of bed
 
-    }
     public void removeAppointment(String date){
         UpcomingAppointments.remove(date);
     }
     public String getAppointment(String date){
         return UpcomingAppointments.get(date);
     }
-    public void ScheduleOT(Doctor doc,String date,String otDetails){
-        doc.AddOT(this,date,otDetails);
-        //add to patient ot
-        UpcomingOT.put(date,doc.doctorid);
-
-
-
-
-    }
-
 
 }
