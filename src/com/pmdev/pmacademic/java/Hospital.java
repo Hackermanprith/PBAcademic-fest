@@ -1,5 +1,7 @@
 package com.pmdev.pmacademic.java;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
 public class Hospital {
@@ -616,7 +618,7 @@ public class Hospital {
         }
     }
 
-    private Staff findStaffById(String staffId) {
+    private @Nullable Staff findStaffById(String staffId) {
         for (Staff staff : Staff_Registry.values()) {
             if (staff.staffid.equals(staffId)) {
                 return staff;
