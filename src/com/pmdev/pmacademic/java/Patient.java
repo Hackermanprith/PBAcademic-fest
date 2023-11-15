@@ -9,7 +9,6 @@ class Patient{
     String admissiondate;
     ArrayList<String>patientdata;
     String bedid;
-    HashMap<String,String> UpcomingOT;
     HashMap<String,String> UpcomingAppointments;
     HashMap<String,Integer> Medicines;
     HashMap<String,ArrayList<String>>MedicalHistory;
@@ -26,47 +25,33 @@ class Patient{
         patientdata.add(email);
         patientdata.add(Gurdian);
         patientdata.add(GurdianPhoneno);
-        Medicines = new HashMap<String,Integer>();
         UpcomingAppointments = new HashMap<>();
         MedicalHistory = new HashMap<>();
-        billable_services = new HashMap<String,Integer>();
+        billable_services = new HashMap<>();
 
     }
-    public void addMedication(String medicationName, int quantity) {
-        Medicines.put(medicationName, quantity);
-    }
 
-    public void addMedicalHistory(String date, ArrayList<String>history) {
-        MedicalHistory.put(date,  history);
-    }
-
-    public void addBillableService(String serviceName, int cost,Financials financials,boolean doeshaveclexp,double hosexp) {
-        billable_services.put(serviceName, cost);
-        financials.addIncome(serviceName,cost,hosexp,doeshaveclexp);
-    }
-    public void printPatientDetails(){
+    public void printPatientDetails() {
         System.out.println("Patient Details");
-        System.out.println("Name: "+patientdata.get(0));
-        System.out.println("Phone No: "+patientdata.get(1));
-        System.out.println("Bed No: "+patientdata.get(2));
-        System.out.println("Address: "+patientdata.get(3));
-        System.out.println("Email: "+patientdata.get(4));
-        System.out.println("Gurdian: "+patientdata.get(5));
-        System.out.println("Gurdian Phone No: "+patientdata.get(6));
-        System.out.println("Medicines: "+Medicines);
-        System.out.println("Medical History: "+MedicalHistory);
-        System.out.println("Billable Services: "+billable_services);
+
+        String format = "| %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %n";
+
+        System.out.format(format,"Admission no", "Name", "Phone No", "Bed No", "Address", "Email", "Guardian", "Guardian Phone No", "Medicines", "Medical History", "Billable Services","Billed amount");
+
+        System.out.format(format,
+                addmitno,
+                patientdata.get(0),
+                patientdata.get(1),
+                patientdata.get(2),
+                patientdata.get(3),
+                patientdata.get(4),
+                patientdata.get(5),
+                patientdata.get(6),
+                Medicines,
+                MedicalHistory,
+                billable_services);
     }
-    public void Bill(){
-        double total = 0;
-        for (String key : Medicines.keySet()) {
-            total += Medicines.get(key);
-        }
-        for (String key : billable_services.keySet()) {
-            total += billable_services.get(key);
-        }
-        System.out.println("Total Bill: "+total);
-    }
+
 
     public void removeAppointment(String date){
         UpcomingAppointments.remove(date);
@@ -74,5 +59,24 @@ class Patient{
     public String getAppointment(String date){
         return UpcomingAppointments.get(date);
     }
+    public int getBill(){
+        int bill = 0;
+        for(int i : billable_services.values()){
+            bill+=i;
+        }
+        return bill;
+    }
+    public void printBillableServices(){
+        System.out.println("Billable Services");
+        String format = "| %-20s | %-20s |";
+        System.out.println("------------------------------------------");
+        System.out.format(format,"Service ID","Service Name","Service Cost");
+        System.out.println("------------------------------------------");
+        for(String i : billable_services.keySet()){
+            System.out.format(format,i,i.split("_")[0],billable_services.get(i));
+            System.out.println("------------------------------------------");
+        }
+    }
+
 
 }
