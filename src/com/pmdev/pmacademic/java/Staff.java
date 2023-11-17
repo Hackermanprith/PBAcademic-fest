@@ -17,14 +17,21 @@ public class Staff {
         this.staffdata = staffdata;
         this.staffsalary = staffsalary;
     }
-    public void printStaffDetails(){
-        System.out.println("Staff Details");
-        System.out.println("Name: "+staffdata.get(0));
-        System.out.println("Phone No: "+staffdata.get(1));
-        System.out.println("Staff ID: "+staffdata.get(2));
-        System.out.println("Address: "+staffdata.get(3));
-        System.out.println("Email: "+staffdata.get(4));
-        System.out.println("Salary: "+staffsalary);
+
+    public void printData() {
+        System.out.println("Staff Details:");
+        System.out.printf("%-15s | %-25s |%-15s | %-20s |%-15s  |\n", "ID", "Name", "Phone Number", "Designation", "Salary");
+        System.out.println("------------------------------------------------------------------");
+        System.out.printf("%-15s%-25s%-15s%-20s%-15.2f%n", staffid, staffname, staffphno, staffdesignation, staffsalary);
+
+        // Print additional staff data from ArrayList in a table
+        if (!staffdata.isEmpty()) {
+            System.out.println("\nAdditional Data:");
+            System.out.printf("%-30s%n", "Additional Information");
+            for (String data : staffdata) {
+                System.out.printf("%-30s%n", data);
+            }
+        }
+        //increase salary
     }
-    //increase salary
 }

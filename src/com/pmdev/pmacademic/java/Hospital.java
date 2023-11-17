@@ -32,79 +32,102 @@ public class Hospital {
         return sc.nextLine();
 
     }
-    public static String takesphinp(String msg) {
+    public  String takesphinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
         String number;
         number = sc.next();
         System.out.println();
         if (number.length() != 10) {
-            number = takesphinp("Invalid Input, Try again, please enter a 11 digit number");
+            number = takesphinp("Invalid Input, Try again, please enter a 11 digit number: ");
         }
         return number;
     }
-    public static void PrintSchedule(String docid){
+    private  void PrintSchedule(String docid){
+        Doctor doc = findDoctorById(docid);
+        if(doc == null){
+            System.out.println("Doctor not found");
+            return;
+        }
+        System.out.println("----------------------------------------------------------------");
+        String formatsepcifier = "| %-9s | %-20s | %-20s |";
+        System.out.printf(formatsepcifier,"Day","Shift 1","Shift 2");
+        System.out.println();
+        System.out.println("----------------------------------------------------------------");
         for(int i = 1;i<=7;i++){
             switch (i){
                 case 1:
-                    System.out.println("Monday: "+      doctorSchedules.get(docid).get(0));
+                    System.out.println();
+                    System.out.printf(formatsepcifier,"Monday ",doctorSchedules.get(docid).get(0).split(",")[0],doctorSchedules.get(docid).get(0).split(",")[1]);
+                    System.out.println();
                     break;
                 case 2:
-                    System.out.println("Tuesday: "+      doctorSchedules.get(docid).get(1));
+                    System.out.printf(formatsepcifier,"Tuesday",doctorSchedules.get(docid).get(1).split(",")[0],doctorSchedules.get(docid).get(1).split(",")[1]);
+                    System.out.println();
                     break;
                 case 3:
-                    System.out.println("Wednesday: "+doctorSchedules.get(docid).get(2));
-
+                    System.out.printf(formatsepcifier,"Wednesday",doctorSchedules.get(docid).get(2).split(",")[0],doctorSchedules.get(docid).get(1).split(",")[1]);
+                    System.out.println();
                     break;
                 case 4:
-                    System.out.println("Thursday: "+   doctorSchedules.get(docid).get(3));
+                    System.out.printf(formatsepcifier,"Thursday", doctorSchedules.get(docid).get(3).split(",")[0],doctorSchedules.get(docid).get(3).split(",")[1]);
+                    System.out.println();
                     break;
                 case 5:
-                    System.out.println("Friday: "+   doctorSchedules.get(docid).get(4));
+                    System.out.printf(formatsepcifier,"Friday",doctorSchedules.get(docid).get(4).split(",")[0],doctorSchedules.get(docid).get(4).split(",")[1]);
+                    System.out.println();
                     break;
                 case 6:
-                    System.out.println("Saturday: "+doctorSchedules.get(docid).get(5));
+                    System.out.printf(formatsepcifier,"Saturday",doctorSchedules.get(docid).get(5).split(",")[0],doctorSchedules.get(docid).get(5).split(",")[1]);
+                    System.out.println();
                     break;
                 case 7:
-                    System.out.println("Sunday: "+ doctorSchedules.get(docid).get(6));
+                    System.out.printf(formatsepcifier,"Sunday: ",doctorSchedules.get(docid).get(6).split(",")[0],doctorSchedules.get(docid).get(6).split(",")[1]);
+                    System.out.println();
                     break;
             }
         }
     }
     public void header(String menuname){
-        String text = "Welcome to Clinic Management System \n by Methodist School Dankuni";
-        if(clinic_managementSystem != null){
-            text = "Welcome to the " +menuname+"of "+clinic_managementSystem +" \n by Methodist School Dankuni";
-        }
-
+        String text = "Welcome to the " +menuname+"of "+clinic_managementSystem +" \n by Methodist School Dankuni";
 
         try {
             // Get the terminal width using System.console()
             int terminalWidth = 16;
 
-                int leftPadding = (terminalWidth - text.length()) / 2;
-                String centeredText = String.format("%" + (leftPadding + text.length()) + "s", text);
+            int leftPadding = (terminalWidth - text.length()) / 2;
+            String centeredText = String.format("%" + (leftPadding + text.length()) + "s", text);
 
-                System.out.println(centeredText);
+            System.out.println(centeredText);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
     Hospital() {
         Patient_Registry = new HashMap<>();
         Doctor_Registry = new HashMap<>();
         Staff_Registry = new HashMap<>();
         Floorplan = new HashMap<>();
-        header("Clinic Management System");
+        header("Clinic Management System ");
         clinic_managementSystem = Takestrinp("Enter the name of the clinic: ");
         doctorSchedules = new HashMap<>();
         int nooffloors = Takeintinp("Enter the number of floors: ");
-        floorPlannerMenu(nooffloors);
+        floorPlannerMenu(nooffloors,false);
         System.out.print("\u000c");
         financials = new Financials();
         System.out.println("Please enter at least 1 doc");
         RegisterDoctor();
         System.out.println("Please enter at least 1 staff");
+        //TODO: Patient default
+        ArrayList<String> testhistory = new ArrayList<>();
+        testhistory.add("Cancer");
+        testhistory.add("More Cancer");
+        testhistory.add("Cancer ++");
+        Patient pat = new Patient("default","default","default","default","default","default","default","default","default",testhistory);
+        Patient_Registry.put("default_0",pat);
+        //TODO: Display docschedule in table format
+
         RegisterStaff();
         mainMeu();
 
@@ -126,6 +149,11 @@ public class Hospital {
                 }
             }
             System.out.println();
+            System.out.println("Rooms on floor");
+            for(Rooms room: roomsOnFloor){
+                System.out.println("Room " + room.roomid + " - " + room.roomtype + " - Capacity: " + room.roomsidecapacity);
+            }
+            System.out.println();
             System.out.println("Chambers on floor: ");
             for (Rooms room : roomsOnFloor) {
                 if (room.roomtype.equals("Chamber")) {
@@ -137,11 +165,13 @@ public class Hospital {
                 System.out.println("Room " + room.roomid + " - " + room.roomtype + " - Capacity: " + room.roomsidecapacity);
             }
             System.out.println();
-            System.out.println("Operation Theatres on floor: ");
         }
     }
-    public void floorPlannerMenu(int floorNo) {
+    public void floorPlannerMenu(int floorNo,boolean refferenced) {
         int n;
+        if(refferenced){
+            printFloorPlan();
+        }
         for(int i = 1;i<= floorNo;i++){
             System.out.println("Floor Planner Menu for Floor " +i);
             do {
@@ -155,14 +185,14 @@ public class Hospital {
                         roomPlanner(i, roomType);
                         break;
                     case 2:
-                            addChamber(i);
+                        addChamber(i);
                         break;
                     case 3:
-                        return;
+                        continue;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-            } while (true);
+            } while (n != 3);
         }
     }
     public void roomPlanner(int floorNo, String roomType) {
@@ -172,7 +202,7 @@ public class Hospital {
             Floorplan.put(floorNo + "_" + roomType, roomsOnFloor);
         }
 
-        int roomID = roomsOnFloor.size() + 1;
+            int roomID = roomsOnFloor.size() + 1;
             String addBeds = Takestrinp("Do you want to add beds Y/N: ").toLowerCase();
             int roomCapacity = Takeintinp("Enter the capacity of the room: ");
             Rooms room = new Rooms(roomID + "_" + roomType, roomType, roomCapacity);
@@ -227,8 +257,12 @@ public class Hospital {
         String name = Takestrinp("Enter the name of the doctor: ");
         String phoneno = takesphinp("Enter the phone no of the doctor: ");
         String doctorid = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
+        if(Doctor_Registry.containsKey(doctorid)){
+            System.out.println("Doctor already exists");
+            return;
+        }
         String speaclity = Takestrinp("Enter the speaclity of the doctor: ");
-        String emphno = Takestrinp("Enter the emergency no of the doctor: ");
+        String emphno = takesphinp("Enter the emergency no of the doctor: ");
         ArrayList<String> data = new ArrayList<String>();
         data.add(name);
         data.add(phoneno);
@@ -242,15 +276,14 @@ public class Hospital {
             System.out.println("Clinic share cannot be greater than per patient charge");
             clinicshare = Takeintinp("Enter the clinic share of the doctor: ");
         }
-        Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit,clinicshare);
-        Doctor_Registry.put(doctorid,doc);
         ArrayList<String>Date = new ArrayList<>();
         for(int i = 1;i<=7;i++){
-           String n = Takestrinp("Enter the timings for day"+i+"of the week: ");
-           Date.add(n);
+            String n = Takestrinp("Enter the timings for day"+i+"of the week,separate shift by (,): ");
+            Date.add(n);
         }
         doctorSchedules.put(doctorid,Date);
-
+        Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit,clinicshare,Date);
+        Doctor_Registry.put(doctorid,doc);
         System.out.println("Doctor Registered");
     }
     public void PrintDocPatients(){
@@ -271,6 +304,10 @@ public class Hospital {
         }
         else{
             Doctor doc = Doctor_Registry.get(docid);
+            if(doc == null){
+                System.out.println("No doctor found with this id");
+                return;
+            }
             for (String date : doc.Patient_Registry.keySet()) {
                 ArrayList<Patient> arr = doc.Patient_Registry.get(date);
                 System.out.println("-------------------------------------------------------------------");
@@ -280,27 +317,44 @@ public class Hospital {
                     System.out.printf("| %-12s | %-20s |", date, pat.patientdata.get(0));
                 }
             }
+
         }
     }
     public void NewBooking(){
+        if(Doctor_Registry.isEmpty()){
+            System.out.println("No doctors in the clinic");
+            return;
+        }
         String name = Takestrinp("Enter the name of the patient: ");
         String phoneno = takesphinp("Enter the phone no of the patient: ");
         String addmitno = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
         printDocChart();
         String RegisterAseatofDoc = Takestrinp("Enter the doctor id to register the patient: ");
+        if(!Doctor_Registry.containsKey(RegisterAseatofDoc)){
+            System.out.println("Doctor not found");
+            return;
+        }
         PrintSchedule(RegisterAseatofDoc);
         String enterthedate = Takestrinp("Enter the date of Registration : ");
         if(Patient_Registry.containsKey(addmitno.toLowerCase())){
             ScheduleAppointment(enterthedate,Patient_Registry.get(addmitno),RegisterAseatofDoc);
         }
         else{
-            System.out.println("Not Registered");
-            ArrayList<String> patientdata = new ArrayList<String>();
             String adress = Takestrinp("Enter the address of the patient: ");
             String email = Takestrinp("Enter the email of the patient: ");
             String Gurdian = Takestrinp("Enter the Gurdian of the patient: ");
             String GurdianPhoneno = takesphinp("Enter the Gurdian Phone no of the patient: ");
-            Patient pat = new Patient(addmitno,enterthedate,name,phoneno,null,adress,Gurdian,GurdianPhoneno,email);
+            String yn = Takestrinp("Do you want to add the patients medical history Y/N: ");
+            ArrayList<String>MedicalHistory = new ArrayList<>();
+            if(yn.trim().toLowerCase().equals("y")){
+                String k = "";
+                System.out.println("To exit type out and for new lines just press enter: ");
+                while(!k.trim().toLowerCase().equals("out")){
+                    k = Takestrinp("Enter the medical history: ");
+                    MedicalHistory.add(k);
+                }
+            }
+            Patient pat = new Patient(addmitno,enterthedate,name,phoneno,null,adress,Gurdian,GurdianPhoneno,email,MedicalHistory);
             Patient_Registry.put(addmitno,pat);
             ScheduleAppointment(enterthedate,pat,RegisterAseatofDoc);
 
@@ -310,9 +364,9 @@ public class Hospital {
      System.out.println("\u000c");
      header("Doctor View Menu");
      System.out.println("Doctors");
-     System.out.println("--------------------------------------------------------");
+     System.out.println("------------------------------------------------------------------------------");
      System.out.printf("| %-12s | %-20s | %-20s |\n", "ID", "Doctor name", "Doctor Speciality");
-     System.out.println("--------------------------------------------------------");
+     System.out.println("-------------------------------------------------------------------------------");
 
      for (String doctorId : Doctor_Registry.keySet()) {
          Doctor doc = Doctor_Registry.get(doctorId);
@@ -327,6 +381,10 @@ public class Hospital {
         String name = Takestrinp("Enter the name of the patient: ");
         String phoneno = takesphinp("Enter the phone no of the patient: ");
         String admitno = name.substring(0).trim() +"_"+phoneno.substring(6,9).trim();
+        if(validatePatient(name,phoneno)){
+            System.out.println("No such patient found");
+            return;
+        }
         String date = Takestrinp("Enter the date of the appointment: ");
         Patient pat = Patient_Registry.get(admitno);
         try{
@@ -340,6 +398,7 @@ public class Hospital {
         }
 
     }
+    //done
     public void mainMeu(){
         int n = 0;
         do{
@@ -349,7 +408,7 @@ public class Hospital {
             System.out.println("1. Patient Functions");
             System.out.println("2. Management and Infrastructure");
             System.out.println("3. Financials");
-            System.out.println("4. Export Data");
+            System.out.println("4. Export Data(Not available yet)");
             System.out.println("5. Exit");
              n = Takeintinp("-> ");
              switch (n){
@@ -375,6 +434,7 @@ public class Hospital {
         }
         while(n!= 6);
     }
+    //done
     private void FinancialsMenu() {
         System.out.println("\u000c");
         int n= 0;
@@ -383,7 +443,7 @@ public class Hospital {
             double [] arr = financials.quickshotdata();
             System.out.println("Expenses: "+arr[0]);
             System.out.println("Income: "+arr[1]);
-            System.out.println("Available balance"+(arr[1]-arr[0]));
+            System.out.println("Available balance: "+(arr[1]-arr[0]));
             System.out.println("1.Add a new income");
             System.out.println("2.Add a new expense");
             System.out.println("3.Modify Income");
@@ -440,7 +500,7 @@ public class Hospital {
         }
         for(Staff staff:Staff_Registry.values()){
             System.out.println("Staff "+staff.staffname+" has earned "+staff.staffsalary);
-            System.out.println("Paying Staff "+staff.staffname+"_"+staff.staffsalary);
+            System.out.println("Paying Staff "+staff.staffname+" "+staff.staffsalary);
             financials.addExpense(String.valueOf("Paying"+staff.staffname),staff.staffsalary);
         }
     }
@@ -449,16 +509,18 @@ public class Hospital {
         int n = 0;
         do{
             System.out.println("Welcome to the Management and Infrastructure menu of "+clinic_managementSystem );
-            System.out.println("1. Add Doctor");
-            System.out.println("2. Add Staff");
-            System.out.println("3. Add Chamber");
-            System.out.println("4. Change Doctor things");
-            System.out.println("5. Change Staff things");
-            System.out.println("6.Remove Doctor");
-            System.out.println("7.Remove staff");
-            System.out.println("8.Print Floor plan");
-            System.out.println("9.View Doc's Schedule");
-            System.out.println("10. Exit");
+            System.out.println("1.Add Doctor");
+            System.out.println("2.Add Staff");
+            System.out.println("4.Show all doctors");
+            System.out.println("5.Show all staff");
+            System.out.println("6.Change Doctor things");
+            System.out.println("7.Change Staff things");
+            System.out.println("8.Remove Doctor");
+            System.out.println("9.Remove staff");
+            System.out.println("10.Print Floor plan");
+            System.out.println("11.Change floor plan");
+            System.out.println("12.View Doc's Schedule");
+            System.out.println("13. Exit");
             n = Takeintinp("-> ");
             switch (n){
                 case 1:
@@ -471,30 +533,30 @@ public class Hospital {
                     addChamber(1);
                     break;
                 case 4:
-                    doctorMenu();
+                    for(Doctor doc:Doctor_Registry.values()){
+                        doc.printData();
+                    }
                     break;
                 case 5:
-                    staffMenu();
-                    break;
-                case 7:
-                    displayStaffMembers();
-                    String staffId = Takestrinp("Enter Staff ID to remove: ");
-                    Staff staff = findStaffById(staffId);
-                    if (staff != null) {
-                        System.out.println("Do you want to pay the staff member Y/N: ");
-                        String choice = Takestrinp("-> ");
-                        if(choice.toLowerCase().equals("y")){
-                            financials.addExpense(String.valueOf("Paying"+staff.staffname),staff.staffsalary);
-                        }
-                        Staff_Registry.remove(staffId);
-                        System.out.println("Staff member removed successfully.");
-                    } else {
-                        System.out.println("Staff member not found with ID: " + staffId);
+                    for(Staff staff:Staff_Registry.values()){
+                        staff.printData();
                     }
                     break;
                 case 6:
-                    displayDoctors();
-                    String doctorId = Takestrinp("Enter Doctor ID to remove: ");
+                    doctorMenu();
+                    break;
+                case 7:
+                    staffMenu();
+                    break;
+                case 8:
+                    for(Doctor doc:Doctor_Registry.values()){
+                        doc.printData();
+                    }
+                    String doctorId = Takestrinp("Enter Doctor ID to remove for (exiting type exit): ");
+                    if(doctorId.trim().toLowerCase().equals("exit")){
+                        System.out.println("Exiting");
+                        return;
+                    }
                     Doctor doctor = findDoctorById(doctorId);
                     if (doctor != null) {
                         if(doctor.earned > 0){
@@ -513,32 +575,65 @@ public class Hospital {
                         Doctor_Registry.remove(doctorId);
                         System.out.println("Doctor removed successfully.");
 
-
-
                     } else {
                         System.out.println("Doctor not found with ID: " + doctorId);
                     }
-                case 8:
-                    printFloorPlan();
                     break;
                 case 9:
-                    PrintDocPatients();
+                    for(Staff staffu:Staff_Registry.values()){
+                        staffu.printData();
+                    }
+                    String staffId1 = Takestrinp("Enter Staff ID to remove(exiting type exit): ");
+                    if(staffId1.trim().toLowerCase().equals("exit")){
+                        System.out.println("Exiting");
+                        return;
+                    }
+                    Staff staffer = findStaffById(staffId1);
+                    String answer = Takestrinp("Do you want to pay the staff his usual salary of "+staffer.staffsalary +"(Y/N) :");
+                    if(answer.trim().toLowerCase().equals("y")){
+                        financials.addExpense(String.valueOf("Paying"+staffer.staffname),staffer.staffsalary);
+                    }
+                    Staff_Registry.remove(staffId1);
                     break;
                 case 10:
+                    printFloorPlan();
+                    break;
+                case 11:
+                    System.out.println("Want to add a new room (Y/N) ");
+                    String choice = Takestrinp("-> ");
+                    if(choice.toLowerCase().equals("Y")){
+                        floorPlannerMenu(Floorplan.size()+2,true);
+                    }
+                    System.out.println("Floor modification menu: ");
+                    int floorNo = Takeintinp("Enter the floor number: ");
+                    printFloorPlan();
+                    floorPlannerMenu(floorNo,true);
+                    break;
+                case 12:
+                    for(Doctor doc:Doctor_Registry.values()){
+                        doc.printData();
+                    }
+                    PrintSchedule(Takestrinp("Enter the doctor id: "));
+                    PrintDocPatients();
+                    break;
+                case 13:
                     return;
                 default:
-                    n = Takeintinp("Enter a number between (1-7): ");
+                    System.out.println("Enter a number between 1 and 11 !!!");
             }
 
         }
         while (n != 9);
     }
-
     private void RegisterStaff() {
         System.out.println("\u000c");
         String name = Takestrinp("Enter the name of the staff: ");
         String phoneno = takesphinp("Enter the phone no of the staff: ");
         String staffid = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
+        if(validateStaff(name,phoneno)){
+            System.out.println("Staff already exists");
+            return;
+        }
         String speaclity = Takestrinp("Enter the speaclity of the staff: ");
         String emphno = Takestrinp("Enter the emergency no of the staff: ");
         double x = Takeintinp("Enter the salary of the staff: ");
@@ -631,8 +726,9 @@ public class Hospital {
         Scanner scanner = new Scanner(System.in);
 
         // Assuming you have a method to display the list of doctors
-        displayDoctors();
-
+        for(Doctor doc:Doctor_Registry.values()){
+            doc.printData();
+        }
         System.out.print("Enter Doctor ID to modify: ");
         String doctorId = scanner.nextLine();
 
@@ -683,7 +779,7 @@ public class Hospital {
                         break;
                     case 0:
                         System.out.println("Exiting Doctor Menu");
-                        break;
+                        return;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
@@ -691,13 +787,6 @@ public class Hospital {
             } while (choice != 0);
         } else {
             System.out.println("Doctor not found with ID: " + doctorId);
-        }
-    }
-
-    private void displayDoctors() {
-        System.out.println("List of Doctors:");
-        for (Doctor doctor : Doctor_Registry.values()) {
-            System.out.println("Doctor ID: " + doctor.doctorid + ", Doctor Name: " + doctor.name);
         }
     }
 
@@ -718,11 +807,14 @@ public class Hospital {
             System.out.println("3.Show Patient Details");
             System.out.println("4.Remove Patient ");
             System.out.println("5.Add Patient Billable service");
-            System.out.println("6.Bill out patient");
-            System.out.println("7.Modify Patient Details");
-            System.out.println("8.Schedule OT(coming soon)");
-            System.out.println("9.Remove OT(coming soon)");
-            System.out.println("10. Exit");
+            System.out.println("6.Add Patient Medical History");
+            System.out.println("7.Show Patient Medical History");
+            System.out.println("8.Bill out patient");
+            System.out.println("9.Modify Patient Details");
+            System.out.println("10.Show all Patients");
+            System.out.println("11.Schedule OT(coming soon)");
+            System.out.println("12.Remove OT(coming soon)");
+            System.out.println("13. Exit");
             int x = Takeintinp("->");
             switch (x){
                 case 1:
@@ -732,7 +824,16 @@ public class Hospital {
                     RemovePatientBooking();
                     break;
                 case 3:
-                    Showpatientdetails();
+                    for(Patient pat12:Patient_Registry.values()){
+                        pat12.printPatientDetails();
+                    }
+                    String name = Takestrinp("Enter the name of the patient: ");
+                    String phoneno = takesphinp("Enter the phone no of the patient: ");
+                    if(validatePatient(name,phoneno)){
+                        System.out.println("No patient found");
+                        return;
+                    }
+                    Showpatientdetails(name,phoneno);
                     break;
                 case 4:
                     Removepat();
@@ -741,18 +842,61 @@ public class Hospital {
                     Addabillableservice();
                     break;
                 case 6:
-                    Billoutpatient();
+                    name = Takestrinp("Enter the name of the patient: ");
+                    phoneno = takesphinp("Enter the phone no of the patient: ");
+                    if(validatePatient(name,phoneno)) {
+                        System.out.println("No patient found");
+                        return;
+                    }
+                    Patient pat = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
+                    pat.addMedicalHistory();
                     break;
                 case 7:
-                    Showpatientdetails();
-                    String name = Takestrinp("Enter the name of the patient: ");
-                    String phoneno = takesphinp("Enter the phone no of the patient: ");
+                    name= Takestrinp("Enter the name of the patient: ");
+                    phoneno= takesphinp("Enter the phone no of the patient: ");
+                    String admitno = name.substring(0).trim() +"_"+phoneno.substring(6,9).trim();
+                    Patient pat1 = Patient_Registry.get(admitno);
+                    if(pat1 == null){
+                        System.out.println("No patient found");
+                        return;
+                    }
+                    pat1.printMedicalHistory();
+                    break;
+                case 8:
+                    System.out.println("\u000c");
+                    System.out.println("Patient List");
+                    for(Patient pat12:Patient_Registry.values()){
+                        pat12.printPatientDetails();
+                    }
+                    Billoutpatient();
+                    break;
+                case 9:
+                    System.out.println("\u000c");
+                    System.out.println("Patient List");
+                    for(Patient pat12:Patient_Registry.values()){
+                        pat12.printPatientDetails();
+                    }
+                    name = Takestrinp("Enter the name of the patient: ");
+                    phoneno = takesphinp("Enter the phone no of the patient: ");
+                    if(validatePatient(name,phoneno)){
+                        System.out.println("No patient found");
+                        return;
+                    }
                     Showpatientdetails(name,phoneno);
                     ModifyPatientMenu(name,phoneno);
                     break;
-                case 8,9:
+                case 10:
+                    System.out.println("\u000c");
+                    System.out.println("Patient List");
+                    for(Patient pat12:Patient_Registry.values()){
+                        pat12.printPatientDetails();
+                    }
+                    break;
+                case 11,12:
                     System.out.println("This feature is not available yet.");
                     break;
+                case 13:
+                    return;
                 default:
                     System.out.println("Enter a number");
             }
@@ -761,10 +905,13 @@ public class Hospital {
         while (true);
 
     }
-
     private void Billoutpatient() {
         String patname = Takestrinp("Enter the name of the patient: ");
         String patphoneno = takesphinp("Enter the phone no of the patient: ");
+        if(validatePatient(patname,patphoneno)){
+            System.out.println("No patient found");
+            return;
+        }
         Patient pat = Patient_Registry.get(patname.substring(0).trim()+"_"+patphoneno.substring(6,9).trim());
         pat.printPatientDetails();
         pat.printBillableServices();
@@ -781,14 +928,19 @@ public class Hospital {
         System.out.println("5. Change Patient Guardian");
         System.out.println("6. Change Patient Guardian Phone Number");
         System.out.println("7. Modify a certain billable service");
-        System.out.println("8. Exit");
+        System.out.println("8. Modify medical history");
+        System.out.println("9. Modify another patient");
+        System.out.println("10. Show Patient Details");
+        System.out.println("11. Modify another patient");
+        System.out.println("12. Exit");
+
         int x = Takeintinp("->");
+        Patient pat = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
         switch (x){
             case 1:
                 String newname = Takestrinp("Enter the new name of the patient: ");
                 String newphoneno = takesphinp("Enter the new phone no of the patient: ");
                 String newaddmitno = newname.substring(0).trim()+"_"+newphoneno.substring(6,9).trim();
-                Patient pat = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
                 Patient_Registry.remove(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
                 pat.addmitno = newaddmitno;
                 pat.patientdata.set(0,newname);
@@ -797,71 +949,89 @@ public class Hospital {
                 break;
             case 2:
                 String newphoneno1 = takesphinp("Enter the new phone no of the patient: ");
-                Patient pat1 = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
                 Patient_Registry.remove(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
-                pat1.patientdata.set(1,newphoneno1);
-                Patient_Registry.put(name.substring(0).trim()+"_"+newphoneno1.substring(6,9).trim(),pat1);
+                pat.patientdata.set(1,newphoneno1);
+                Patient_Registry.put(name.substring(0).trim()+"_"+newphoneno1.substring(6,9).trim(),pat);
                 break;
             case 3:
                 String newadd = Takestrinp("Enter the new address of the patient: ");
-                Patient pat2 = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
-                pat2.patientdata.set(3,newadd);
+                pat.patientdata.set(3,newadd);
                 break;
             case 4:
                 String newemail = Takestrinp("Enter the new email of the patient: ");
-                Patient pat3 = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno);
-                pat3.patientdata.set(4,newemail);
+                pat = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno);
+                pat.patientdata.set(4,newemail);
                 break;
             case 5:
                 String newguardian = Takestrinp("Enter the new guardian of the patient: ");
-                Patient pat4 = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
-                pat4.patientdata.set(5,newguardian);
+                pat.patientdata.set(5,newguardian);
                 break;
             case 6:
                 String newguardianphno = Takestrinp("Enter the new guardian phone no of the patient: ");
-                Patient pat5 = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
-                pat5.patientdata.set(6,newguardianphno);
+                pat.patientdata.set(6,newguardianphno);
                 break;
             case 7:
-                Patient pat6 = Patient_Registry.get(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim());
-                pat6.printBillableServices();
+                pat.printBillableServices();
                 String service = Takestrinp("Enter the name of the service: ");
                 int cost = Takeintinp("Enter the cost of the service: ");
-                if(pat6.billable_services.containsKey(service+"_"+cost)){
-                    int y  = pat6.billable_services.get(service+"_"+cost);
+                if(pat.billable_services.containsKey(service+"_"+cost)){
+                    int y  = pat.billable_services.get(service+"_"+cost);
                     y+=cost;
-                    pat6.billable_services.put(service+"_"+cost,y);
+                    pat.billable_services.put(service+"_"+cost,y);
                     return;
                 }
-                pat6.billable_services.put(service,cost);
+                pat.billable_services.put(service,cost);
                 break;
             case 8:
+                pat.printMedicalHistory();
+                System.out.println("1. Add a new medical history");
+                System.out.println("2. Modify a medical history");
+                System.out.println("3. Remove a medical history");
+                int y = Takeintinp("-> ");
+                switch (y){
+                    case 1:
+                        pat.addMedicalHistory();
+                        break;
+                    case 2:
+                        pat.modifyMedicalHistory();
+                        break;
+                    case 3:
+                        pat.removeMedicalHistory();
+                        break;
+                    default:
+                        System.out.println("Enter a number between 1-3");
+                }
 
                 break;
+            case 9:
+                System.out.println("\u000c");
+                header("Patient Modification Menu");
+                String name1 = Takestrinp("Enter the name of the patient: ");
+                String phone1 = takesphinp("Enter the phone no of the patient: ");
+                ModifyPatientMenu(name1,phone1);
+                return;
+            case 10:
+                pat.printPatientDetails();
+                break;
+            case 11:
+                System.out.println("\u000c");
+                header("Patient Modification Menu");
+                String name2 = Takestrinp("Enter the name of the patient: ");
+                String phone2 = takesphinp("Enter the phone no of the patient: ");
+                if(validatePatient(name2,phone2)){
+                    System.out.println("No patient found");
+                    break;
+                }
+                ModifyPatientMenu(name2,phone2);
+                return;
+            case 12:
+                System.out.println("Exiting");
+                System.out.println("\u000c");
+                return;
             default:
                 System.out.println("Enter a number between 1-7");
         }
 
-    }
-    private void Showpatientdetails() {
-        System.out.println("\u000c");
-        String ans = Takestrinp("Do you want to see all patients Y/N: ");
-        if(ans.equals("Y")){
-            for(Patient pat:Patient_Registry.values()){
-                pat.printPatientDetails();
-            }
-            return;
-        }
-        String name = Takestrinp("Enter the name of the patient: ");
-        String phoneno = takesphinp("Enter the phone no of the patient: ");
-        String admitno = name.substring(0).trim() +"_"+phoneno.substring(6,9).trim();
-        Patient pat = Patient_Registry.get(admitno);
-        if(pat != null){
-            pat.printPatientDetails();
-        }
-        else{
-            System.out.println("Patient not found");
-        }
     }
     private void Showpatientdetails(String name,String phoneno){
         String admitno = name.substring(0).trim() +"_"+phoneno.substring(6,9).trim();
@@ -936,5 +1106,16 @@ public class Hospital {
         }
         
     }
-
+    private boolean validatePatient(String name,String phoneno){
+        if(Patient_Registry.containsKey(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim())){
+            return false;
+        }
+        return true;
+    }
+    private boolean validateStaff(String name,String phoneno){
+        if(Staff_Registry.containsKey(name.substring(0).trim()+"_"+phoneno.substring(6,9).trim())){
+            return true;
+        }
+        return false;
+    }
 }

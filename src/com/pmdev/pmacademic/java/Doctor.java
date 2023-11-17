@@ -11,8 +11,7 @@ public class Doctor {
     String name;
     String speaclity;
     String emphno;
-    HashMap<String,String> timings;
-    HashMap<String,String> ot;
+    HashMap<Integer,String> timings;
     double earned = 0.0;
     double clinicshare = 0.0;
 
@@ -20,10 +19,9 @@ public class Doctor {
     int doctordailyLimit = 10;
     ArrayList<String> data;
     HashMap<String, ArrayList<Patient>> Patient_Registry;
-    HashMap<String,ArrayList<Patient>> patient_ot;
 
 
-    Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit,double clinicshare){
+    Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit,double clinicshare,ArrayList<String> timings){
         this.doctorid = doctorid;
         this.name = name;
         data = new ArrayList<>();
@@ -34,6 +32,12 @@ public class Doctor {
         this.perpatientcharge = perpatientcharge;
         this.clinicshare = clinicshare;
         Patient_Registry = new HashMap<>();
+        this.timings = new HashMap<>();
+        for(int i = 0;i<timings.size();i++){
+            this.timings.put(i,timings.get(i));
+            i++;
+        }
+
     }
     public void AddPatientToSchedule(String date,Patient patient){
         try {
@@ -61,6 +65,16 @@ public class Doctor {
         else{
             System.out.println("Doctor is not available on this day");
         }
+    }
+
+    public void printData() {
+        // Print Doctor Details in a table-like format
+        System.out.printf("%-15s%-25s%-20s%-15s%-15s%-15s%-15s%n",
+                "Doctor ID", "Name", "Specialty", "Phone Number",
+                "Per Patient Charge", "Clinic Share", "Amount Earned");
+
+        System.out.printf("%-15s%-25s%-20s%-15s%-15.2f%-15.2f%-15.2f%n",
+                doctorid, name, speaclity, emphno,perpatientcharge ,clinicshare, earned);
     }
 
 }
