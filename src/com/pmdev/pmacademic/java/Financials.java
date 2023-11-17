@@ -60,56 +60,55 @@ public class Financials {
     }
 
         public void showFinancials() {
-            System.out.println("\u000c");
-            System.out.println("------------------------------------------------------------");
-            System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
-            System.out.println("------------------------------------------------------------");
-
-            // Display Income
-            for (String incomeName : Ins.keySet()) {
-                ArrayList<String> incomeData = Ins.get(incomeName);
-                System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", incomeName, incomeData.get(1), incomeData.get(0), incomeData.get(2));
-            }
-            System.out.println("------------------------------------------------------------");
+            showIncomes();
             System.out.println();
-            System.out.println("------------------------------------------------------------");
-            System.out.printf("| %-20s | %-15s | %-15s |\n","Expense ID" ,"Expense name", "Cost Incurred");
-            System.out.println("------------------------------------------------------------");
-
-            // Display Expenses
-            for (String expenseName : Expenses.keySet()) {
-                ArrayList<String> expenseData = Expenses.get(expenseName);
-                System.out.printf("| %-20s | %-15s | %-15s |\n",expenseName,expenseData.get(0) ,expenseData.get(1), "");
-            }
-
-            System.out.println("------------------------------------------------------------");
+            showExpense();
+            System.out.println();
         }
         public void showIncomes(){
             System.out.println("\u000c");
             System.out.println("-----------------------------------------------------------------------");
-            System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
+            System.out.printf("| %-20s | %-20s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
             System.out.println("------------------------------------------------------------");
-
+            ArrayList<String> forlataer = new ArrayList<>();
             // Display Income
             for (String incomeName : Ins.keySet()) {
                 ArrayList<String> incomeData = Ins.get(incomeName);
+                if(incomeData.get(2).equals("0.0")){
+                    continue;
+                }
+                if(incomeData.get(1).length() > 14){
+                    forlataer.add(incomeName);
+                    continue;
+                }
                 System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", incomeName, incomeData.get(1), incomeData.get(0), incomeData.get(2));
+            }
+            for(String i : forlataer){
+                ArrayList<String> incomeData = Ins.get(i);
+                System.out.printf("| %-20s | %-20s | %-20s | %-20s |\n", i, incomeData.get(1), incomeData.get(0), incomeData.get(2));
             }
             System.out.println("----------------------------------------------------------------");
 
+
         }
         public void showExpense(){
-
             System.out.println("----------------------------------------------------------------------------------------------");
             System.out.printf("| %-20s | %-15s | %-15s |\n","Expense ID" ,"Expense name", "Cost Incurred");
             System.out.println("-----------------------------------------------------------------------------------------------");
-
+            ArrayList<String>Z = new ArrayList<>();
             // Display Expenses
             for (String expenseName : Expenses.keySet()) {
                 ArrayList<String> expenseData = Expenses.get(expenseName);
+                if(expenseData.get(1).length() > 14){
+                    Z.add(expenseName);
+                    continue;
+                }
                 System.out.printf("| %-20s | %-15s | %-15s |\n",expenseName,expenseData.get(0) ,expenseData.get(1), "");
             }
-
+            for(String i : Z){
+                ArrayList<String> expenseData = Expenses.get(i);
+                System.out.printf("| %-20s | %-20s | %-20s |\n", i, expenseData.get(0), expenseData.get(1));
+            }
             System.out.println("------------------------------------------------------------");
 
         }
