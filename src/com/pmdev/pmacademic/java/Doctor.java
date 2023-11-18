@@ -14,14 +14,14 @@ public class Doctor {
     HashMap<Integer,String> timings;
     double earned = 0.0;
     double clinicshare = 0.0;
-
+    boolean isMedicOnStandby = false;
     double perpatientcharge = 1000.0;
     int doctordailyLimit = 10;
     ArrayList<String> data;
     HashMap<String, ArrayList<Patient>> Patient_Registry;
 
 
-    Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit,double clinicshare,ArrayList<String> timings){
+    Doctor(String doctorid,String name,String speaclity,String emphno,ArrayList<String> data,double perpatientcharge,int dlimit,double clinicshare,ArrayList<String> timings,boolean isMedicOnStandby){
         this.doctorid = doctorid;
         this.name = name;
         data = new ArrayList<>();
@@ -37,6 +37,7 @@ public class Doctor {
             this.timings.put(i,timings.get(i));
             i++;
         }
+        this.isMedicOnStandby = isMedicOnStandby;
 
     }
     public void AddPatientToSchedule(String date,Patient patient){

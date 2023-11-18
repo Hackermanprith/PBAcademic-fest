@@ -9,9 +9,39 @@ public class Hospital {
     static HashMap<String ,Patient> Patient_Registry;
     HashMap<String,Doctor>Doctor_Registry;
      static Map<String, ArrayList<String>> doctorSchedules;
+     HashMap<String,Doctor> ismedonstand;
     HashMap<String,Staff>Staff_Registry;
     String clinic_managementSystem = null;
     Financials financials;
+    Hospital() {
+        Patient_Registry = new HashMap<>();
+        Doctor_Registry = new HashMap<>();
+        Staff_Registry = new HashMap<>();
+        Floorplan = new HashMap<>();
+        header("Clinic Management System ");
+        clinic_managementSystem = Takestrinp("Enter the name of the clinic: ");
+        doctorSchedules = new HashMap<>();
+        int nooffloors = Takeintinp("Enter the number of floors: ");
+        floorPlannerMenu(nooffloors,false);
+        System.out.print("\u000c");
+        financials = new Financials();
+        System.out.println("Please enter at least 1 doc");
+        RegisterDoctor();
+        System.out.println("Please enter at least 1 staff");
+        //TODO: Patient default
+        ArrayList<String> testhistory = new ArrayList<>();
+        testhistory.add("Cancer");
+        testhistory.add("More Cancer");
+        testhistory.add("Cancer ++");
+        Patient pat = new Patient("default","default","default","default","default","default","default","default","default",testhistory);
+        Patient_Registry.put("default_0",pat);
+        //TODO: Display docschedule in table format
+
+        RegisterStaff();
+        mainMeu();
+
+
+    }
     public static int Takeintinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
@@ -25,7 +55,6 @@ public class Hospital {
         System.out.println();
         return number;
     }
-
     public static String Takestrinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
@@ -104,35 +133,6 @@ public class Hospital {
         }
 
     }
-    Hospital() {
-        Patient_Registry = new HashMap<>();
-        Doctor_Registry = new HashMap<>();
-        Staff_Registry = new HashMap<>();
-        Floorplan = new HashMap<>();
-        header("Clinic Management System ");
-        clinic_managementSystem = Takestrinp("Enter the name of the clinic: ");
-        doctorSchedules = new HashMap<>();
-        int nooffloors = Takeintinp("Enter the number of floors: ");
-        floorPlannerMenu(nooffloors,false);
-        System.out.print("\u000c");
-        financials = new Financials();
-        System.out.println("Please enter at least 1 doc");
-        RegisterDoctor();
-        System.out.println("Please enter at least 1 staff");
-        //TODO: Patient default
-        ArrayList<String> testhistory = new ArrayList<>();
-        testhistory.add("Cancer");
-        testhistory.add("More Cancer");
-        testhistory.add("Cancer ++");
-        Patient pat = new Patient("default","default","default","default","default","default","default","default","default",testhistory);
-        Patient_Registry.put("default_0",pat);
-        //TODO: Display docschedule in table format
-
-        RegisterStaff();
-        mainMeu();
-
-
-    }
     public static void printFloorPlan() {
         for (String floorKey : Floorplan.keySet()) {
             ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorKey);
@@ -166,6 +166,9 @@ public class Hospital {
             }
             System.out.println();
         }
+    }
+    public void EmergencyAdmission(){
+
     }
     public void floorPlannerMenu(int floorNo,boolean refferenced) {
         int n;
@@ -258,10 +261,23 @@ public class Hospital {
         String phoneno = takesphinp("Enter the phone no of the doctor: ");
         String doctorid = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
         if(Doctor_Registry.containsKey(doctorid)){
-            System.out.println("Doctor already exists");
+            String n = Takestrinp("Doctor already exists do you want to create another doc with the same details (Y/N): ");
+            if(n.trim().toLowerCase().equals("n")){
             return;
+            }
+            doctorid.concat("_"+Doctor_Registry.size());
+
         }
-        String speaclity = Takestrinp("Enter the speaclity of the doctor: ");
+        String standby = Takestrinp("Is the doc a medic on standby(Y/N): ");
+        boolean b;
+        if(standby.trim().toLowerCase().equals("y")){
+            b = true;
+        }
+        else{
+            b =false;
+        }
+
+        String speaclity = Takestrinp("Enter the speciality of the doctor: ");
         String emphno = takesphinp("Enter the emergency no of the doctor: ");
         ArrayList<String> data = new ArrayList<String>();
         data.add(name);
@@ -281,8 +297,9 @@ public class Hospital {
             String n = Takestrinp("Enter the timings for day"+i+"of the week,separate shift by (,): ");
             Date.add(n);
         }
+
         doctorSchedules.put(doctorid,Date);
-        Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit,clinicshare,Date);
+        Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit,clinicshare,Date,b);
         Doctor_Registry.put(doctorid,doc);
         System.out.println("Doctor Registered");
     }
