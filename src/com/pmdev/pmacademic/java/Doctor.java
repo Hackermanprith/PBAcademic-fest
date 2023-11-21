@@ -12,6 +12,7 @@ public class Doctor {
     String speaclity;
     String emphno;
     HashMap<Integer,String> timings;
+    ArrayList<String> offdays;
     double earned = 0.0;
     double clinicshare = 0.0;
     boolean isMedicOnStandby = false;
@@ -37,6 +38,7 @@ public class Doctor {
             this.timings.put(i,timings.get(i));
             i++;
         }
+        offdays = new ArrayList<>();
         this.isMedicOnStandby = isMedicOnStandby;
 
     }
@@ -76,6 +78,9 @@ public class Doctor {
 
         System.out.printf("%-15s%-25s%-20s%-15s%-15.2f%-15.2f%-15.2f%n",
                 doctorid, name, speaclity, emphno,perpatientcharge ,clinicshare, earned);
+    }
+    public void setOffdays(String offday){
+        this.offdays.add(offday);
     }
 
 }

@@ -2,41 +2,48 @@ package com.pmdev.pmacademic.java;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.*;
 
 public class Hospital {
     static HashMap<String, ArrayList<Rooms>> Floorplan;
     static HashMap<String ,Patient> Patient_Registry;
+    static HashMap<String ,Patient> EPatient_Registry;
+    static HashMap<String,Doctor> EMT_Registry;
     HashMap<String,Doctor>Doctor_Registry;
-     static Map<String, ArrayList<String>> doctorSchedules;
-     HashMap<String,Doctor> ismedonstand;
+    static Map<String, ArrayList<String>> doctorSchedules;
+
     HashMap<String,Staff>Staff_Registry;
     String clinic_managementSystem = null;
     Financials financials;
     Hospital() {
+        String str = Takestrinp("Do you want to load from previous session: ");
+        if(str.trim().toLowerCase().equals("y")){
+            DataLoader dll= new DataLoader();
+            dll.load();
+        }
         Patient_Registry = new HashMap<>();
         Doctor_Registry = new HashMap<>();
         Staff_Registry = new HashMap<>();
         Floorplan = new HashMap<>();
+        EPatient_Registry = new HashMap<>();
+        doctorSchedules = new HashMap<>();
+        EMT_Registry = new HashMap<>();
+        financials = new Financials();
         header("Clinic Management System ");
         clinic_managementSystem = Takestrinp("Enter the name of the clinic: ");
-        doctorSchedules = new HashMap<>();
         int nooffloors = Takeintinp("Enter the number of floors: ");
         floorPlannerMenu(nooffloors,false);
         System.out.print("\u000c");
-        financials = new Financials();
         System.out.println("Please enter at least 1 doc");
         RegisterDoctor();
         System.out.println("Please enter at least 1 staff");
-        //TODO: Patient default
         ArrayList<String> testhistory = new ArrayList<>();
         testhistory.add("Cancer");
         testhistory.add("More Cancer");
         testhistory.add("Cancer ++");
         Patient pat = new Patient("default","default","default","default","default","default","default","default","default",testhistory);
         Patient_Registry.put("default_0",pat);
-        //TODO: Display docschedule in table format
-
         RegisterStaff();
         mainMeu();
 
@@ -72,12 +79,125 @@ public class Hospital {
         }
         return number;
     }
+    private void printCalendar(Doctor docid){
+        int yy = Takeintinp("Enter the year: ");
+
+        // Reading integer input value
+        int mm = Takeintinp("Enter the month: ");
+        do {
+            // Reading integer input value
+            int d = 1;
+            int m = 1;
+            int y = 1;
+            int dy = 1;
+
+            // Storing data and months as input
+            String day[] = {"SUN", "MON", "TUE", "WED",
+                    "THU", "FRI", "SAT"};
+            String month[]
+                    = {"JANUARY", "FEBRUARY", "MARCH",
+                    "APRIL", "MAY", "JUNE",
+                    "JULY", "AUGUST", "SEPTEMBER",
+                    "OCTOBER", "NOVEMBER", "DECEMBER"};
+
+            // Custom array as input
+            int ar[] = {31, 29, 31, 30, 31, 30,
+                    31, 31, 30, 31, 30, 31};
+
+            // Till condition holds true
+            while (true) {
+
+                if (d == 1 && m == mm && y == yy) {
+                    break;
+                }
+
+                if (y % 4 == 0 && y % 100 != 0
+                        || y % 100 == 0) {
+                    ar[1] = 29;
+                } else {
+                    ar[1] = 28;
+                }
+                dy++;
+                d++;
+
+                if (d > ar[m - 1]) {
+                    m++;
+                    d = 1;
+                }
+
+                if (m > 12) {
+                    m = 1;
+                    y++;
+                }
+
+                if (dy == 7) {
+                    dy = 0;
+                }
+            }
+
+            int c = dy;
+
+            if (y % 4 == 0 && y % 100 != 0 || y % 400 == 0) {
+                ar[1] = 29;
+            } else {
+                ar[1] = 28;
+            }
+
+            // Print the desired month of input year
+            System.out.println("MONTH:" + month[mm - 1]);
+
+            for (int k = 0; k < 7; k++) {
+                System.out.print("   " + day[k]);
+            }
+
+            System.out.println();
+
+            for (int j = 1; j <= (ar[mm - 1] + dy); j++) {
+                if (j > 6) {
+                    dy = dy % 6;
+                }
+            }
+
+            int spaces = dy;
+            if (spaces < 0)
+                spaces = 6;
+
+            // Printing the calendar
+            for (int i = 0; i < spaces; i++)
+                System.out.print("      ");
+            for (int i = 1; i <= ar[mm - 1]; i++) {
+                if (docid.doctordailyLimit+1 > docid.Patient_Registry.get(i).size() || docid.doctordailyLimit == 0 || docid.offdays.contains(i + "/" + mm + "/" + yy) || doctorSchedules.get(docid.doctorid).get(i - 1).equals("0,0")) {
+                    System.out.printf(" %4d \\u001B[31m", i);
+                } else {
+                    Color green = new Color(0, 255, 0);
+                    System.out.printf(" %4d ", i, green);
+                }
+
+                if (((i + spaces) % 7 == 0)
+                        || (i == ar[mm - 1]))
+                    System.out.println();
+            }
+            System.out.println("Do you want to see the change the month or year (Y/N): ");
+            String n = Takestrinp("-> ");
+            if(n.trim().toLowerCase().equals("n")){
+               break;
+            }
+            yy = Takeintinp("Enter the year: ");
+            mm = Takeintinp("Enter the month: ");
+        }
+        while(true);
+
+}
     private  void PrintSchedule(String docid){
         Doctor doc = findDoctorById(docid);
         if(doc == null){
             System.out.println("Doctor not found");
             return;
         }
+        System.out.println("Printing Calendar for Dr."+doc.name);
+        printCalendar(doc);
+        System.out.println("Showing timings for Dr."+doc.name);
+
         System.out.println("----------------------------------------------------------------");
         String formatsepcifier = "| %-9s | %-20s | %-20s |";
         System.out.printf(formatsepcifier,"Day","Shift 1","Shift 2");
@@ -115,6 +235,12 @@ public class Hospital {
                     System.out.println();
                     break;
             }
+        }
+        System.out.println("----------------------------------------------------------------");
+        System.out.println("Do you want to see the calendar again or just select the date (Y/N): ");
+        String n = Takestrinp("-> ");
+        if(n.trim().toLowerCase().equals("y")){
+            printCalendar(doc);
         }
     }
     public void header(String menuname){
@@ -168,8 +294,57 @@ public class Hospital {
         }
     }
     public void EmergencyAdmission(){
+        System.out.println("\u000c");
+        header("Emergency Admission Menu");
+        String name = Takestrinp("Enter the name of the patient: ");
+        String phoneno = takesphinp("Enter the phone no of the patient: ");
+        String addmitno = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
+        if(validatePatient(name,phoneno)){
+            System.out.println("No such patient found");
+            return;
+        }
+        String adress = Takestrinp("Enter the address of the patient: ");
+        String Gurdian = Takestrinp("Enter the Gurdian of the patient: ");
+        String GurdianPhoneno = takesphinp("Enter the Gurdian Phone no of the patient: ");
+        String yn = Takestrinp("Do you want to add the patients medical history Y/N: ");
+        ArrayList<String>MedicalHistory = new ArrayList<>();
+        if(yn.trim().toLowerCase().equals("y")){
+            String k = "";
+            System.out.println("To exit type out and for new lines just press enter: ");
+            while(!k.trim().toLowerCase().equals("out")){
+                k = Takestrinp("Enter the complaints: ");
+                MedicalHistory.add(k);
+            }
+        }
+        printEmtDocchart();
+        Patient pat = new Patient(addmitno,"Emergency",name,phoneno,null,adress,Gurdian,GurdianPhoneno,"Emergency",MedicalHistory);
+        EPatient_Registry.put(addmitno,pat);
+        System.out.println("Patient added");
+        System.out.println("Assigning doctor");
+
+        String docid = Takestrinp("Enter the doctor id: ");
+
+        System.out.println("Assigning bed");
+    }
+
+    private void printEmtDocchart() {
+        System.out.println("\u000c");
+        System.out.println("For backing at any point just type exit");
+        header("Doctor View Menu");
+        System.out.println("Doctors");
+        System.out.println("------------------------------------------------------------------------------");
+        System.out.printf("| %-30s | %-20s | %-20s |\n", "ID", "Doctor name", "Doctor Speciality");
+        System.out.println("-------------------------------------------------------------------------------");
+
+        for (String doctorId : EMT_Registry.keySet()) {
+            Doctor doc = EMT_Registry.get(doctorId);
+            System.out.printf("| %-12s | %-20s | %-20s |\n", doc.doctorid, doc.name, doc.speaclity);
+        }
+        System.out.println("--------------------------------------------------------");
+        String docid = Takestrinp("Enter the doctor you want to assign to: ");
 
     }
+
     public void floorPlannerMenu(int floorNo,boolean refferenced) {
         int n;
         if(refferenced){
@@ -293,14 +468,17 @@ public class Hospital {
             clinicshare = Takeintinp("Enter the clinic share of the doctor: ");
         }
         ArrayList<String>Date = new ArrayList<>();
+        System.out.println("If the doctor is not available on a particular day then type 0,0");
         for(int i = 1;i<=7;i++){
-            String n = Takestrinp("Enter the timings for day"+i+"of the week,separate shift by (,): ");
+            String n = Takestrinp("Enter the timings for day "+i+" of the week,separate shift by (,): ");
             Date.add(n);
         }
-
         doctorSchedules.put(doctorid,Date);
         Doctor doc = new Doctor(doctorid,name,speaclity,emphno,data,perpatientcharge,dlimit,clinicshare,Date,b);
         Doctor_Registry.put(doctorid,doc);
+        if(b){
+            EMT_Registry.put(doctorid,doc);
+        }
         System.out.println("Doctor Registered");
     }
     public void PrintDocPatients(){
@@ -342,8 +520,12 @@ public class Hospital {
             System.out.println("No doctors in the clinic");
             return;
         }
+        System.out.println("For exiting at any point just type exit");
         String name = Takestrinp("Enter the name of the patient: ");
         String phoneno = takesphinp("Enter the phone no of the patient: ");
+        if(name == "exit" || phoneno == "exit"){
+            return;
+        }
         String addmitno = name.substring(0).trim()+"_"+phoneno.substring(6,9).trim();
         printDocChart();
         String RegisterAseatofDoc = Takestrinp("Enter the doctor id to register the patient: ");
@@ -352,7 +534,10 @@ public class Hospital {
             return;
         }
         PrintSchedule(RegisterAseatofDoc);
-        String enterthedate = Takestrinp("Enter the date of Registration : ");
+        String enterthedate = Takestrinp("Enter the date of Registration along with shift in the format (dd/mm/yy-shift1) : ");
+        if(enterthedate.trim().toLowerCase().equals("exit")){
+            return;
+        }
         if(Patient_Registry.containsKey(addmitno.toLowerCase())){
             ScheduleAppointment(enterthedate,Patient_Registry.get(addmitno),RegisterAseatofDoc);
         }
@@ -382,7 +567,7 @@ public class Hospital {
      header("Doctor View Menu");
      System.out.println("Doctors");
      System.out.println("------------------------------------------------------------------------------");
-     System.out.printf("| %-12s | %-20s | %-20s |\n", "ID", "Doctor name", "Doctor Speciality");
+     System.out.printf("| %-30s | %-20s | %-20s |\n", "ID", "Doctor name", "Doctor Speciality");
      System.out.println("-------------------------------------------------------------------------------");
 
      for (String doctorId : Doctor_Registry.keySet()) {
@@ -415,7 +600,6 @@ public class Hospital {
         }
 
     }
-    //done
     public void mainMeu(){
         int n = 0;
         do{
@@ -451,7 +635,6 @@ public class Hospital {
         }
         while(n!= 6);
     }
-    //done
     private void FinancialsMenu() {
         System.out.println("\u000c");
         int n= 0;
@@ -506,7 +689,6 @@ public class Hospital {
             }
         }while (n!= 6);
     }
-
     private void releasepayroll() {
         System.out.println("\u000c");
         for(Doctor doc:Doctor_Registry.values()){
@@ -537,7 +719,8 @@ public class Hospital {
             System.out.println("10.Print Floor plan");
             System.out.println("11.Change floor plan");
             System.out.println("12.View Doc's Schedule");
-            System.out.println("13. Exit");
+            System.out.println("13.Add doctor day off");
+            System.out.println("14. Exit");
             n = Takeintinp("-> ");
             switch (n){
                 case 1:
@@ -634,6 +817,27 @@ public class Hospital {
                     PrintDocPatients();
                     break;
                 case 13:
+                    System.out.println("\u000c");
+                    printDocChart();
+                    String docid = Takestrinp("Enter the doctor id(to stop type exit): ");
+                    if(!Doctor_Registry.containsKey(docid)){
+                        System.out.println("Doctor not found");
+                        return;
+                    }
+                    Doctor doc = Doctor_Registry.get(docid);
+                    printCalendar(doc);
+                    String date = Takestrinp("Enter the date of the day off: ");
+                    doc.offdays.add(date);
+                    if(doc.Patient_Registry.containsKey(date)){
+                        ArrayList<Patient> pat = doc.Patient_Registry.get(date);
+                        for(Patient patient:pat){
+                            System.out.println("Removing appointment for patient "+patient.patientdata.get(0)+" on "+date);
+                            patient.removeAppointment(date);
+                        }
+                    }
+                    break;
+
+                case 14:
                     return;
                 default:
                     System.out.println("Enter a number between 1 and 11 !!!");
@@ -665,7 +869,6 @@ public class Hospital {
         System.out.println("Staff Registered");
 
     }
-
     public void staffMenu() {
         System.out.println("\u000c");
         Scanner scanner = new Scanner(System.in);
@@ -722,14 +925,12 @@ public class Hospital {
             System.out.println("Staff member not found with ID: " + staffId);
         }
     }
-
     private void displayStaffMembers() {
         System.out.println("List of Staff Members:");
         for (Staff staff : Staff_Registry.values()) {
             System.out.println("Staff ID: " + staff.staffid + ", Staff Name: " + staff.staffname);
         }
     }
-
     private @Nullable Staff findStaffById(String staffId) {
         for (Staff staff : Staff_Registry.values()) {
             if (staff.staffid.equals(staffId)) {
@@ -738,7 +939,6 @@ public class Hospital {
         }
         return null;
     }
-
     public void doctorMenu() {
         Scanner scanner = new Scanner(System.in);
 
@@ -806,7 +1006,6 @@ public class Hospital {
             System.out.println("Doctor not found with ID: " + doctorId);
         }
     }
-
     private Doctor findDoctorById(String doctorId) {
         for (Doctor doctor : Doctor_Registry.values()) {
             if (doctor.doctorid.equals(doctorId)) {

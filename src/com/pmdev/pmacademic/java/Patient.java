@@ -37,11 +37,25 @@ class Patient{
             return;
         }
         MedicalHistory.put("OLD",MD);
-
-
+    }
+    Patient(String addmitno,String admissiondate,String name,String phoneno,String bedid,String Adress,String Gurdian,String GurdianPhoneno,ArrayList<String>Complaint,String docid){
+        this.addmitno = addmitno;
+        this.admissiondate = admissiondate;
+        this.bedid = null;
+        patientdata = new ArrayList<String>();
+        patientdata.add(name);
+        patientdata.add(phoneno);
+        patientdata.add(bedid);
+        patientdata.add(Adress);
+        patientdata.add(Gurdian);
+        patientdata.add(GurdianPhoneno);
+        UpcomingAppointments = new HashMap<>();
+        MedicalHistory = new HashMap<>();
+        billable_services = new HashMap<>();
+        MedicalHistory.put("Complaints",Complaint);
+        UpcomingAppointments.put("Emergency Call",docid);
 
     }
-
     public void printPatientDetails() {
         System.out.println("Patient Details");
 
@@ -61,8 +75,6 @@ class Patient{
                 MedicalHistory,
                 billable_services);
     }
-
-
     public void removeAppointment(String date){
         UpcomingAppointments.remove(date);
     }
@@ -134,7 +146,6 @@ class Patient{
         }
     }
 
-
     public void modifyMedicalHistory() {
         printMedicalHistory();
         Scanner sc = new Scanner(System.in);
@@ -164,12 +175,14 @@ class Patient{
                 break;
         }
     }
-
     public void removeMedicalHistory() {
         printMedicalHistory();
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter the date of the medical history to be removed");
         String date = sc.nextLine();
         MedicalHistory.remove(date);
+    }
+    public void setBedid(){
+
     }
 }
