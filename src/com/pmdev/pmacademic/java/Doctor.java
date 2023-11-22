@@ -16,6 +16,8 @@ public class Doctor {
     double earned = 0.0;
     double clinicshare = 0.0;
     boolean isMedicOnStandby = false;
+    HashMap<String, String> chamberSchedule;
+    boolean isMedicAvaliable = false;
     double perpatientcharge = 1000.0;
     int doctordailyLimit = 10;
     ArrayList<String> data;
@@ -47,10 +49,15 @@ public class Doctor {
             if (Patient_Registry.containsKey(date) && Patient_Registry.get(date).size() < doctordailyLimit) {
                 Patient_Registry.get(date).add(patient);
             } else {
-                if (!(Patient_Registry.containsKey(date))) {
-                    // System.out.println("Doctor is not available on this day");
+                if (offdays.contains(date) || Patient_Registry.get(date).size() >= doctordailyLimit) {
+                    System.out.println("Doctor is not available on this day");
+                    return;
+                } else {
+                    Patient_Registry.put(date, new ArrayList<>());
+                    Patient_Registry.get(date).add(patient);
                 }
             }
+
             System.out.println("Patient Added to the schedule");
             System.out.println("Your appointment is on " + date + " with Dr." + name);
             patient.UpcomingAppointments.put(date, this.doctorid);
@@ -82,5 +89,18 @@ public class Doctor {
     public void setOffdays(String offday){
         this.offdays.add(offday);
     }
+    public void Login(){
+        this.isMedicOnStandby= false;
+        this.isMedicAvaliable = true;
+        System.out.println("Doctor has been logged in,");
 
+    }
+    public void Logout(){
+        this.isMedicAvaliable = false;
+        this.isMedicOnStandby = false;
+        System.out.println("Logged out");
+    }
+    public void setChamberSchedule(HashMap<String, String> chamberSchedule) {
+        this.chamberSchedule = chamberSchedule;
+    }
 }

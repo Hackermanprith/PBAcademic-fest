@@ -112,7 +112,6 @@ public class Financials {
             System.out.println("------------------------------------------------------------");
 
         }
-
     public void modfiyIncome() {
         String serviceId = Takestrinp("Enter the service ID: ");
         System.out.print("\u000C");

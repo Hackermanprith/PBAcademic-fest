@@ -34,4 +34,18 @@ public class Staff {
         }
         //increase salary
     }
+    public ArrayList<ArrayList<String>> returnstaffdata(){
+        ArrayList<String>arr = new ArrayList<>();
+        arr.add(staffid);
+        arr.add(staffname);
+        arr.add(staffdesignation);
+        arr.add(staffdesignation);
+        arr.add(String.valueOf(staffsalary));
+        ArrayList<ArrayList<String>> newarraylist = new ArrayList<>();
+        newarraylist.add(arr);
+        newarraylist.add(staffdata);
+        return newarraylist;
+
+    }
 }
+

@@ -1,8 +1,9 @@
 package com.pmdev.pmacademic.java;
 
-public class Main {
+import java.security.NoSuchAlgorithmException;
 
-    public static void main(String[] args) {
+public class Main {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         Hospital nursing = new Hospital();
     }
 }
