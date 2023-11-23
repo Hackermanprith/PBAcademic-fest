@@ -1,14 +1,24 @@
 package com.pmdev.pmacademic.java;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 class Rooms{
     String roomid;
     String roomtype;
     int roomsidecapacity = 10;
-    public Hashtable<String,Beds> Bedsinroom;
+    public HashMap<String, Beds> Bedsinroom;
+
+    public Rooms(String roomName, int capacity, boolean isOccupied) {
+        this.roomid = roomName;
+        this.roomsidecapacity = capacity;
+        this.Bedsinroom = new HashMap<>();
+
+    }
+
+    public Rooms() {
+
+    }
+
     public static int Takeintinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
@@ -24,7 +34,7 @@ class Rooms{
     }
 
     Rooms(String roomid,String roomtype, int roomsidecapacity){
-        Bedsinroom = new Hashtable<>();
+        Bedsinroom = new HashMap<>();
         this.roomid = roomid;
         this.roomtype = roomtype;
         this.roomsidecapacity = roomsidecapacity;
@@ -71,6 +81,14 @@ class   Beds{
         this.bedtype = bedtype;
         this.bed_cost = price;
     }
+
+    public Beds() {
+
+    }
+
+    public void changeOccupant(String newOccupant) {
+        this.occupant = newOccupant;
+    }
     public void changeBedType(String newBedType) {
         this.bedtype = newBedType;
     }
@@ -78,59 +96,17 @@ class   Beds{
 }
  class Chamber extends Rooms {
      private String chamberID;
-     HashMap<String,String > ChamberSchedule;
      ArrayList<String> offtimes;
-     boolean chamberstatus = false;
      HashMap<String, String> bookings;
+
     public Chamber(String chamberID, int capacity) {
         super(chamberID, "chamber", capacity);
         this.chamberID = chamberID;
         offtimes = new ArrayList<>();
-        ChamberSchedule = new HashMap<>();
+        bookings = new HashMap<>();
     }
      public String getChamberID() {
          return chamberID;
      }
-     public void ChangeChamberstatus(boolean newchamberstatus) {
-         this.chamberstatus = newchamberstatus;
-     }
-     public void EditOffdays(String newOffday, String oldOffday) {
-         // Edit the list of off days
-         if (offtimes.contains(oldOffday)) {
-             offtimes.remove(oldOffday);
-             offtimes.add(newOffday);
-         } else {
-             System.out.println("Error: Old off day not found.");
-         }
-     }
-     public boolean bookChamber(String doctorId, String timeSlot) {
-         if (!bookings.containsKey(timeSlot)) {
-             bookings.put(timeSlot, doctorId);
-             System.out.println("Chamber " + chamberID + " booked by Doctor " + doctorId + " for time slot " + timeSlot);
-             return true;
-         } else {
-             System.out.println("Chamber " +  chamberID + " is already booked by Doctor " + doctorId + " for time slot " + bookings.get(doctorId));
-             return false;
-         }
-     }
-     public void Changecurrentstatus(boolean status){
-        this.chamberstatus = false;
-
-     }
-     public boolean checkIfavailable(String date,String shift){
-        if(offtimes.contains(date+"-"+shift)){
-            return true;
-        }
-        if(chamberstatus){
-            return  true;
-        }
-        if(ChamberSchedule.get(date+"-"+shift).equals("none")){
-            return true;
-        }
-
-        return  false;
-
-     }
-
 
  }

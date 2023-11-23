@@ -44,6 +44,14 @@ public class Doctor {
         this.isMedicOnStandby = isMedicOnStandby;
 
     }
+
+    public Doctor() {
+        data = new ArrayList<>();
+        Patient_Registry = new HashMap<>();
+        this.timings = new HashMap<>();
+
+    }
+
     public void AddPatientToSchedule(String date,Patient patient){
         try {
             if (Patient_Registry.containsKey(date) && Patient_Registry.get(date).size() < doctordailyLimit) {
@@ -59,7 +67,7 @@ public class Doctor {
             }
 
             System.out.println("Patient Added to the schedule");
-            System.out.println("Your appointment is on " + date + " with Dr." + name);
+            System.out.println("Your appointment is on " + date + " with Dr." + name + "after "+ timings.get(Patient_Registry.get(date).size()-1)+"patients ");
             patient.UpcomingAppointments.put(date, this.doctorid);
         }
         catch (Exception e){
@@ -79,13 +87,24 @@ public class Doctor {
 
     public void printData() {
         // Print Doctor Details in a table-like format
-        System.out.printf("%-15s%-25s%-20s%-15s%-15s%-15s%-15s%n",
+        for(int i = 0;i<120;i++){
+            System.out.print("-");
+        }
+        System.out.println();
+        System.out.printf("| %-15s | %-25s | %-20s | %-15s | %-15s | %-15s | %-15s |%n",
                 "Doctor ID", "Name", "Specialty", "Phone Number",
                 "Per Patient Charge", "Clinic Share", "Amount Earned");
-
-        System.out.printf("%-15s%-25s%-20s%-15s%-15.2f%-15.2f%-15.2f%n",
-                doctorid, name, speaclity, emphno,perpatientcharge ,clinicshare, earned);
+        for(int i = 0;i<120;i++){
+            System.out.print("-");
+        }
+        System.out.println();
+        System.out.printf("| %-15s | %-25s | %-20s | %-15s | %-15.2f | %-15.2f | %-15.2f |%n",
+                doctorid, name, speaclity, emphno, perpatientcharge, clinicshare, earned);
+        for(int i = 0;i<120;i++){
+            System.out.print("-");
+        }
     }
+
     public void setOffdays(String offday){
         this.offdays.add(offday);
     }

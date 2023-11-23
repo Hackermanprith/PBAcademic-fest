@@ -1,6 +1,11 @@
 package com.pmdev.pmacademic.java;
 
+import javax.crypto.SecretKey;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.pmdev.pmacademic.java.DataExporter.encrypt;
 
 public class Staff {
     String staffname;
@@ -18,6 +23,10 @@ public class Staff {
         this.staffsalary = staffsalary;
     }
 
+    public Staff() {
+
+    }
+
     public void printData() {
         System.out.println("Staff Details:");
         System.out.printf("%-15s | %-25s |%-15s | %-20s |%-15s  |\n", "ID", "Name", "Phone Number", "Designation", "Salary");
@@ -33,19 +42,6 @@ public class Staff {
             }
         }
         //increase salary
-    }
-    public ArrayList<ArrayList<String>> returnstaffdata(){
-        ArrayList<String>arr = new ArrayList<>();
-        arr.add(staffid);
-        arr.add(staffname);
-        arr.add(staffdesignation);
-        arr.add(staffdesignation);
-        arr.add(String.valueOf(staffsalary));
-        ArrayList<ArrayList<String>> newarraylist = new ArrayList<>();
-        newarraylist.add(arr);
-        newarraylist.add(staffdata);
-        return newarraylist;
-
     }
 }
 

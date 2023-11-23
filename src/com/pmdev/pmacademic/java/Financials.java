@@ -7,8 +7,8 @@ import java.util.Random;
 import static com.pmdev.pmacademic.java.Hospital.Takestrinp;
 
 public class Financials {
-    HashMap<String, ArrayList<String>> Expenses;
-    HashMap<String, ArrayList<String>> Ins;
+    public static HashMap<String, ArrayList<String>> Expenses;
+    public HashMap<String, ArrayList<String>> Ins;
 
     Financials(){
         Expenses = new HashMap<>();
@@ -74,21 +74,17 @@ public class Financials {
             // Display Income
             for (String incomeName : Ins.keySet()) {
                 ArrayList<String> incomeData = Ins.get(incomeName);
-                if(incomeData.get(2).equals("0.0")){
-                    continue;
-                }
-                if(incomeData.get(1).length() > 14){
+                if(incomeData.get(0).length() > 14){
                     forlataer.add(incomeName);
                     continue;
                 }
-                System.out.printf("| %-20s | %-15s | %-15s | %-15s |\n", incomeName, incomeData.get(1), incomeData.get(0), incomeData.get(2));
+                System.out.printf("| %-20s | %-20s | %-15s | %-15s |\n", incomeName, incomeData.get(0), incomeData.get(2), incomeData.get(1));
             }
             for(String i : forlataer){
                 ArrayList<String> incomeData = Ins.get(i);
-                System.out.printf("| %-20s | %-20s | %-20s | %-20s |\n", i, incomeData.get(1), incomeData.get(0), incomeData.get(2));
+                System.out.printf("| %-30s | %-30s | %-30s | %-30s |\n", i, incomeData.get(0), incomeData.get(2), incomeData.get(1));
             }
             System.out.println("----------------------------------------------------------------");
-
 
         }
         public void showExpense(){
