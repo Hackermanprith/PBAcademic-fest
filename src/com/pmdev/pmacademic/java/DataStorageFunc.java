@@ -51,30 +51,45 @@ class DataExporter {
                 exportData.append("Per Patient Charge: ").append(encrypt(String.valueOf(doctor.perpatientcharge), secretKey)).append("\n");
                 exportData.append("Clinic Share: ").append(encrypt(String.valueOf(doctor.clinicshare), secretKey)).append("\n");
                 exportData.append("Amount Earned: ").append(encrypt(String.valueOf(doctor.earned), secretKey)).append("\n");
+                exportData.append("isEMT: ").append(encrypt(String.valueOf(doctor.isMedicOnStandby),secretKey)).append("\n");
 
                 // Append doctor timings
-                exportData.append("Timings:\n");
-                Set<Integer> timingKeys = doctor.timings.keySet();
-                for (Integer key : timingKeys) {
-                    exportData.append(encrypt(String.valueOf(key), secretKey)).append(": ")
-                            .append(encrypt(doctor.timings.get(key), secretKey)).append("\n");
+                try {
+                    exportData.append("Timings:\n");
+                    Set<Integer> timingKeys = doctor.timings.keySet();
+                    for (Integer key : timingKeys) {
+                        exportData.append(encrypt(String.valueOf(key), secretKey)).append(": ")
+                                .append(encrypt(doctor.timings.get(key), secretKey)).append("\n");
+                    }
+                }catch (Exception e){
+                    exportData.append("Timings:\n");
+                    exportData.append("none : none");
                 }
 
                 // Append off days
-                exportData.append("Off Days:\n");
-                for (String offDay : doctor.offdays) {
-                    exportData.append(encrypt(offDay, secretKey)).append("\n");
-                }
-                exportData.append("Patient Registry:\n");
-                for (Map.Entry<String, ArrayList<Patient>> entry : doctor.Patient_Registry.entrySet()) {
-                    exportData.append("Patient ID: ").append(encrypt(entry.getKey(), secretKey)).append("\n");
-                    exportData.append("Patient Details:\n");
-                    for (Patient patient : entry.getValue()) {
-                        exportData.append(encrypt(patient.toString(), secretKey)).append("\n");
+                try {
+                    exportData.append("Off Days:\n");
+                    for (String offDay : doctor.offdays) {
+                        exportData.append(encrypt(offDay, secretKey)).append("\n");
                     }
-                    exportData.append("===\n");
+                }catch (Exception e){
+                    exportData.append("Off Days:\n ");
+                    exportData.append("null");
                 }
-
+                try {
+                    exportData.append("Patient Registry:\n");
+                    for (Map.Entry<String, ArrayList<Patient>> entry : doctor.Patient_Registry.entrySet()) {
+                        exportData.append("Patient ID: ").append(encrypt(entry.getKey(), secretKey)).append("\n");
+                        exportData.append("Patient Details:\n");
+                        for (Patient patient : entry.getValue()) {
+                            exportData.append(encrypt(patient.toString(), secretKey)).append("\n");
+                        }
+                        exportData.append("===\n");
+                    }
+                }catch (Exception e){
+                    exportData.append("Patient Registry: \n");
+                    exportData.append("Null");
+                }
                 // Write the export string to the file
                 writer.write(exportData.toString());
 
@@ -163,33 +178,50 @@ class DataExporter {
                 patientDataString.append("Is Emergency: ").append(patient.isEmergency).append("\n");
 
                 // Export Medical History
-                patientDataString.append("Medical History:\n");
-                if(!patient.MedicalHistory.isEmpty()) {
-                    for (String date : patient.MedicalHistory.keySet()) {
-                        patientDataString.append("\tDate: ").append(date)
-                                .append(", Diagnosis: ").append(patient.MedicalHistory.get(date).get(1)).append("\n");
-                        // Add more details if needed
+                try {
+                    patientDataString.append("Medical History:\n");
+                    if (!patient.MedicalHistory.isEmpty()) {
+                      for (String date : patient.MedicalHistory.keySet()) {
+                            patientDataString.append("\tDate: ").append(date)
+                                    .append(", Diagnosis: ").append(patient.MedicalHistory.get(date).get(1)).append("\n");
+                            // Add more details if needed
+                        }
                     }
+                }catch(Exception e){
+                    System.out.println("");
+
                 }
-                patientDataString.append("Billable Services:\n");
-                for (Map.Entry<String, Integer> entry : patient.billable_services.entrySet()) {
-                    patientDataString.append("\tService: ").append(entry.getKey())
-                            .append(", Cost: ").append(entry.getValue()).append("\n");
+                try {
+                    patientDataString.append("Billable Services:\n");
+                    for (Map.Entry<String, Integer> entry : patient.billable_services.entrySet()) {
+                        patientDataString.append("\tService: ").append(entry.getKey())
+                                .append(", Cost: ").append(entry.getValue()).append("\n");
+                    }
+
+                }catch (Exception e)
+                {
+                    System.out.println(e);// Export Upcoming Appointments
+                }
+                try {
+                    patientDataString.append("Upcoming Appointments:\n");
+                    for (Map.Entry<String, String> entry : patient.UpcomingAppointments.entrySet()) {
+                        patientDataString.append("\tDate: ").append(entry.getKey())
+                                .append(", Doctor: ").append(entry.getValue()).append("\n");
+                    }
+                }catch (Exception e){
+                    System.out.println(e);
                 }
 
-                // Export Upcoming Appointments
-                patientDataString.append("Upcoming Appointments:\n");
-                for (Map.Entry<String, String> entry : patient.UpcomingAppointments.entrySet()) {
-                    patientDataString.append("\tDate: ").append(entry.getKey())
-                            .append(", Doctor: ").append(entry.getValue()).append("\n");
+                try {
+                    patientDataString.append("Hospital Expenses:\n");
+                    for (Map.Entry<String, Integer> entry : patient.HospitalExpenses.entrySet()) {
+                        patientDataString.append("\tExpense: ").append(entry.getKey())
+                                .append(", Cost: ").append(entry.getValue()).append("\n");
+                    }
+                }catch (Exception e){
+                    System.out.println(e);
                 }
-
                 // Export Hospital Expenses
-                patientDataString.append("Hospital Expenses:\n");
-                for (Map.Entry<String, Integer> entry : patient.HospitalExpenses.entrySet()) {
-                    patientDataString.append("\tExpense: ").append(entry.getKey())
-                            .append(", Cost: ").append(entry.getValue()).append("\n");
-                }
 
                 // Convert patient data to bytes
                 String encryptedData = encrypt(patientDataString.toString(), secretKey);
@@ -456,7 +488,10 @@ class DataLoader {
                                 }
                                 currentDoctor.Patient_Registry = patientRegistry;
                                 break;
+                            case "isEMT":
+                                currentDoctor.isMedicOnStandby = Boolean.parseBoolean(value);
                         }
+
 
                     }
                 }
@@ -526,22 +561,22 @@ class DataLoader {
                                 patient.admissiondate = value;
                                 break;
                             case "Name":
-                                patient.patientdata.set(0, value);
+                                patient.patientdata.add(0, value);
                                 break;
                             case "Phone No":
-                                patient.patientdata.set(1, value);
+                                patient.patientdata.add(1, value);
                                 break;
                             case "Address":
-                                patient.patientdata.set(2, value);
+                                patient.patientdata.add(2, value);
                                 break;
                             case "Email":
-                                patient.patientdata.set(3, value);
+                                patient.patientdata.add(3, value);
                                 break;
                             case "Guardian":
-                                patient.patientdata.set(4, value);
+                                patient.patientdata.add(4, value);
                                 break;
                             case "Guardian Phone No":
-                                patient.patientdata.set(5, value);
+                                patient.patientdata.add(5, value);
                                 break;
                             case "Bed ID":
                                 patient.bedid = value;

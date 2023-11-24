@@ -47,16 +47,18 @@ public class Doctor {
 
     public Doctor() {
         data = new ArrayList<>();
-        Patient_Registry = new HashMap<>();
         this.timings = new HashMap<>();
+        this.offdays = new ArrayList<>();
+        Patient_Registry = new HashMap<>();
 
     }
 
-    public void AddPatientToSchedule(String date,Patient patient){
+    public void AddPatientToSchedule(String date,Patient patient) {
         try {
             if (Patient_Registry.containsKey(date) && Patient_Registry.get(date).size() < doctordailyLimit) {
                 Patient_Registry.get(date).add(patient);
-            } else {
+            }
+            else {
                 if (offdays.contains(date) || Patient_Registry.get(date).size() >= doctordailyLimit) {
                     System.out.println("Doctor is not available on this day");
                     return;
@@ -65,16 +67,14 @@ public class Doctor {
                     Patient_Registry.get(date).add(patient);
                 }
             }
-
             System.out.println("Patient Added to the schedule");
-            System.out.println("Your appointment is on " + date + " with Dr." + name + "after "+ timings.get(Patient_Registry.get(date).size()-1)+"patients ");
+            System.out.println("Your appointment is on " + date + " with Dr." + name + "after " + timings.get(Patient_Registry.get(date).size() - 1) + "patients ");
             patient.UpcomingAppointments.put(date, this.doctorid);
+        } catch (Exception e) {
         }
-        catch (Exception e){
-            System.out.println("There is a error ");
-        }
-
     }
+
+
     public void RemovePatientReg(String date,Patient patient){
         if(Patient_Registry.containsKey(date)){
             Patient_Registry.get(date).remove(patient);

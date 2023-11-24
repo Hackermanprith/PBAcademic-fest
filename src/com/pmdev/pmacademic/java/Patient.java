@@ -19,6 +19,11 @@ class Patient {
     boolean isEmergency;
 
     public Patient() {
+        patientdata = new ArrayList<>();
+        UpcomingAppointments = new HashMap<>();
+        MedicalHistory = new HashMap<>();
+        billable_services = new HashMap<>();
+        HospitalExpenses = new HashMap<>();
 
     }
     public static String Takestrinp(String msg) {
@@ -76,9 +81,8 @@ class Patient {
             System.out.print("-");
         }
         String format = "| %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %-20s | %n";
-
-        System.out.format(format, "Admission no", "Name", "Phone No", "Bed No", "Address", "Email", "Guardian", "Guardian Phone No", "Medicines", "Medical History", "Billable Services", "Billed amount");
-
+        System.out.println();
+        System.out.println();
         System.out.format(format,
                 addmitno,
                 patientdata.get(0),
@@ -103,7 +107,6 @@ class Patient {
     public String getAppointment(String date) {
         return UpcomingAppointments.get(date);
     }
-
     public void printBillableServices() {
         System.out.println("Billable Services");
         String format = "| %-20s | %-20s |";

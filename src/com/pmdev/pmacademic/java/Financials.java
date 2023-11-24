@@ -14,7 +14,6 @@ public class Financials {
         Expenses = new HashMap<>();
         Ins = new HashMap<>();
     }
-
     //add expense method
     public double[] quickshotdata() {
         double expenses = 0.0;
@@ -26,7 +25,6 @@ public class Financials {
             }
             for (ArrayList<String>ex : Ins.values()) {
                 income += Double.valueOf(ex.get(1));
-                expenses = expenses + Double.valueOf(ex.get(2));
             }
 
 
@@ -39,13 +37,10 @@ public class Financials {
         int n = rand.nextInt(9999);
         ArrayList<String> data = new ArrayList<>();
         if (hosexp) {
-            ArrayList<String> dataw = new ArrayList<>();
-            dataw.add(String.valueOf(hospcost));
-            Expenses.put(serviceName, data);
+            addExpense(serviceName+"expense",hospcost);
         }
         data.add(0, serviceName);
         data.add(1, String.valueOf(cost));
-        data.add(2, String.valueOf(hospcost));
         Ins.put(serviceName+"_"+n, data);
     }
 

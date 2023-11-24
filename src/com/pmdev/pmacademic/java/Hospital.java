@@ -23,18 +23,20 @@ public class Hospital {
     HashMap<String, Doctor> Doctor_Registry;
     static Map<String, ArrayList<String>> doctorSchedules;
     ArrayList<Chamber> Chambers;
-    String RESET = "\u001B[0m";
-    String RED = "\u001B[31m";
-    String GREEN = "\u001B[32m";
-    String YELLOW = "\u001B[33m";
 
     HashMap<String, Staff> Staff_Registry;
-    String clinic_managementSystem = "New clinic ltd";
+    String clinic_managementSystem = "New Clinic";
     Financials financials;
     Databasedb databaseE;
     DataExporter dex;
     DataLoader dll;
     int totalchambersbooked = 0;
+    public void printPatientDataHeader() {
+        System.out.println("=== Patient Data Header ===");
+        System.out.printf("%-15s | %-15s | %-25s | %-15s | %-25s | %-25s | %-25s | %-20s | %-10s | %-13s\n",
+                "Admission No", "Admission Date", "Name", "Phone No", "Address", "Email", "Guardian", "Guardian Phone No", "Bed ID", "Is Emergency");
+        System.out.println("===========================");
+    }
 
 Hospital() throws NoSuchAlgorithmException {
         databaseE = new Databasedb();
@@ -110,11 +112,11 @@ Hospital() throws NoSuchAlgorithmException {
             clinic_managementSystem = Takestrinp("Enter the name of the clinic: ");
             //save the clinic name to a file
             dll.saveClinicName(clinic_managementSystem);
-            int nooffloors = Takeintinp("Enter the number of floors: ");
+            int nooffloors = Takeintinp("Enter the number of floors(G+1): ");
             floorPlannerMenu(nooffloors, false);
             if(totalchambersbooked==0){
                 System.out.println("Atleast add 1 chamber");
-                int nooffloors1 = Takeintinp("Enter the floor on which you want to add Chamber: ");
+                int nooffloors1 = Takeintinp("Enter the floor on which you want to add Chamber (g+1): ");
                 if(nooffloors1>nooffloors){
                     System.out.println("Invalid floor");
                     nooffloors1 = Takeintinp("Please enter the floor on which you want to add Chamber: ");
@@ -265,6 +267,7 @@ Hospital() throws NoSuchAlgorithmException {
         } while (true);
     }
     private void PrintSchedule(String docid) {
+
         Doctor doc = findDoctorById(docid);
         if (doc == null) {
             System.out.println("Doctor not found");
@@ -318,6 +321,224 @@ Hospital() throws NoSuchAlgorithmException {
         if (n.trim().toLowerCase().equals("y")) {
             printCalendar(doc);
         }
+    }
+    private void EmergencyMenu() {
+        int n = 0;
+        do {
+            System.out.print("\u000c");
+            System.out.flush();
+            header(" Emergency Patient Functions(Experimental) ");
+            System.out.println("1. Emergency Patient Admission");
+            System.out.println("2. Emergency Patient Diagnosis");
+            System.out.println("4. Emergency Bill Out Patient");
+            System.out.println("5. Shift Patient from Emergency to Normal");
+            System.out.println("6. Change patient bed");
+            System.out.println("7. Transfer Patient to another hospital");
+            System.out.println("8. Exit");
+            n = Takeintinp("-> ");
+            switch (n) {
+                case 1:
+                    EmergencyAdmission();
+                    break;
+                case 2:
+                    EmergencyPatientDiagnosis();
+                    break;
+                case 3:
+                    System.out.println("\u000c");
+                    System.out.println("Patient details");
+                    for (Patient pat : EPatient_Registry.values()) {
+                        pat.printPatientDetails();
+                    }
+                    break;
+                case 4:
+                    System.out.println("\u000c");
+                    System.out.println("Billing out patient: ");
+                    for(int i = 1;i<=200;i++){
+                        System.out.print("-");
+                    }
+                    for (Patient pat : EPatient_Registry.values()) {
+                        pat.printPatientDetails();
+                    }
+                    for(int i = 1;i<=200;i++){
+                        System.out.print("-");
+                    }
+                    String name = Takestrinp("Enter the name of the patient: ");
+                    String phoneno = takesphinp("Enter the phone no of the patient: ");
+                    String addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
+                    if (validatePatient(name, phoneno)) {
+                        System.out.println("No such patient found");
+                        return;
+                    }
+                    Patient pat = EPatient_Registry.get(addmitno);
+                    System.out.println("Billing out patient: " + pat.patientdata.get(0));
+                    System.out.println("Do you want to bill out the patient Y/N: ");
+                    String yn = Takestrinp("-> ");
+                    if (yn.trim().toLowerCase().equals("y")) {
+                        pat.Billoutpatient();
+                        financials.addIncome(String.valueOf("Doctors visit by" + pat.addmitno), pat.getBill(), (pat.getBill() - pat.getHospitalCost()), true);
+                    } else {
+                        System.out.println("Patient not billed out");
+                    }
+                    break;
+                case 5:
+                    System.out.println("\u000c");
+                    System.out.println("Shifting patient from emergency to normal: ");
+                    for(int i =0;i<200;i++){
+                        System.out.print("-");
+                    }
+                    System.out.println();
+                    for (Patient pat5 : EPatient_Registry.values()) {
+                        pat5.printPatientDetails();
+                    }
+                    for(int i =0;i<200;i++){
+                        System.out.print("-");
+                    }
+                    System.out.println();
+                    String name1 = Takestrinp("Enter the name of the patient: ");
+                    String phoneno1 = takesphinp("Enter the phone no of the patient: ");
+                    String addmitno1 = name1.substring(0).trim() + "_" + phoneno1.substring(6, 9).trim();
+                    if (validatePatient(name1, phoneno1)) {
+                        System.out.println("No such patient found");
+                        return;
+                    }
+                    Patient pat1 = EPatient_Registry.get(addmitno1);
+                    System.out.println("Shifting patient from emergency to normal: " + pat1.patientdata.get(0));
+                    System.out.println("Do you want to shift the patient Y/N: ");
+                    String yn1 = Takestrinp("-> ");
+                    if (yn1.trim().toLowerCase().equals("y")) {
+                        System.out.println("Assigning doctor");
+                        printDocChart();
+                        String docid = Takestrinp("Enter the doctor id: ");
+                        if (!Doctor_Registry.containsKey(docid)) {
+                            System.out.println("Doctor not found");
+                            return;
+                        }
+                        pat1.patientdata.set(2, docid);
+                        ScheduleAppointment("Emergency", pat1, docid);
+                        EPatient_Registry.remove(addmitno1);
+                        Patient_Registry.put(addmitno1, pat1);
+                    } else {
+                        System.out.println("Patient not shifted");
+                    }
+                    break;
+                case 6:
+                    System.out.println("\u000c");
+                    System.out.println("Changing patient bed: ");
+                    for(int i =0;i<200;i++){
+                        System.out.print("-");
+                    }
+                    System.out.println();
+                    for (Patient pat8 : EPatient_Registry.values()) {
+                        pat8.printPatientDetails();
+                    }
+                    for(int i =0;i<200;i++){
+                        System.out.print("-");
+                    }
+                    System.out.println();
+                    name = Takestrinp("Enter the name of the patient: ");
+                    phoneno = takesphinp("Enter the phone no of the patient: ");
+                    addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
+                    if (validatePatient(name, phoneno)) {
+                        System.out.println("No such patient found");
+                        return;
+                    }
+                    pat = EPatient_Registry.get(addmitno);
+                    if(pat.bedid == null){
+                        System.out.println("Patient is not in bed, cannot change bed");
+                        return;
+                    }
+                    System.out.println("Changing patient bed: " + pat.patientdata.get(0));
+                    System.out.println("Do you want to change the patient bed Y/N: ");
+                    yn = Takestrinp("-> ");
+                    if (yn.trim().toLowerCase().equals("y")) {
+                        System.out.println("Assigning bed");
+                        printFreeBeds();
+                        String bedid = Takestrinp("Enter the bed id: ");
+                        if (!bedid.contains("bed")) {
+                            System.out.println("Invalid bed id");
+                            return;
+                        }
+                        String roomid = bedid.split("_")[0];
+                        roomid = roomid.substring(0,roomid.length()-1);
+                        String bedtype = bedid.split("_")[2];
+                        bedtype = bedtype.substring(1,bedtype.length()-1);
+
+
+                        Rooms room = null;
+                        for (String floorKey : Floorplan.keySet()) {
+                            ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorKey);
+                            for (Rooms room1 : roomsOnFloor) {
+                                if (room1.roomid.equals(roomid)) {
+                                    room = room1;
+                                    break;
+                                }
+                            }
+                        }
+                        if (room == null) {
+                            System.out.println("Room not found");
+                            return;
+                        }
+                        Beds bed = room.Bedsinroom.get(bedtype);
+                        if (bed == null) {
+                            System.out.println("Bed not found");
+                            return;
+                        }
+                        if (bed.occupant != null) {
+                            System.out.println("Bed already occupied");
+                            return;
+                        }
+                        pat.TransferBed(bedid,bed);
+                    } else {
+                        System.out.println("Patient bed not changed");
+                    }
+                    break;
+                case 7:
+                    System.out.println("\u000c");
+                    System.out.println("Transfering patient to another hospital: ");
+                    System.out.println("%-200-");
+                    for (Patient pat9 : EPatient_Registry.values()) {
+                        pat9.printPatientDetails();
+                    }
+                    System.out.println("%-200-");
+                    name = Takestrinp("Enter the name of the patient: ");
+                    phoneno = takesphinp("Enter the phone no of the patient: ");
+                    addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
+                    if (validatePatient(name, phoneno)) {
+                        System.out.println("No such patient found");
+                        return;
+                    }
+                    pat = EPatient_Registry.get(addmitno);
+                    System.out.println("Transfering patient to another hospital: " + pat.patientdata.get(0));
+                    System.out.println("Do you want to transfer the patient Y/N: ");
+                    yn = Takestrinp("-> ");
+                    if (yn.trim().toLowerCase().equals("y")) {
+                        System.out.println("Do you want to immedietly bill out patient Y/N: ");
+                        String yn4 = Takestrinp("-> ");
+                        if (yn4.trim().toLowerCase().equals("y")) {
+                            System.out.println("Billing out patient: ");
+                            pat.Billoutpatient();
+                            financials.addIncome(String.valueOf("Doctors visit by" + pat.addmitno), pat.getBill(), (pat.getBill() - pat.getHospitalCost()), true);
+                        } else {
+                            System.out.println("Patient not billed out");
+                        }
+                        pat.printPatientDetails();
+                        pat.printMedicalHistory();
+                        EPatient_Registry.remove(addmitno);
+                    } else {
+                        System.out.println("Patient not transferred");
+                    }
+
+                    break;
+                case 8:
+                    return;
+                default:
+                    System.out.println("Enter a number between 1-8");
+
+            }
+
+        }
+        while (n != 8);
+
     }
     private String getShift(String scheduleValue) {
         return scheduleValue.equals("0") ? "Off" : scheduleValue;
@@ -407,7 +628,7 @@ Hospital() throws NoSuchAlgorithmException {
             }
         }
         printEmtDocchart();
-        String docid = Takestrinp("Enter the doctor id: ");
+        String docid = Takestrinp("Enter the doctor id(if none is appearning on screen type none to exit this is because no doctor is logged in): ");
         if (!EMT_Registry.containsKey(docid)) {
             System.out.println("Doctor not found");
             return;
@@ -456,6 +677,7 @@ Hospital() throws NoSuchAlgorithmException {
             Patient pat = new Patient(addmitno, Calendar.getInstance().DATE + "/" + Calendar.getInstance().MONTH + "/" + Calendar.getInstance().YEAR, name, phoneno, null, null, adress, Gurdian, GurdianPhoneno, MedicalHistory, docid);
             ScheduleAppointment("Emergency", pat, docid);
             EPatient_Registry.put(addmitno, pat);
+
         }
 
 
@@ -463,11 +685,9 @@ Hospital() throws NoSuchAlgorithmException {
     public void EmergencyPatientDiagnosis() {
         System.out.println("\u000c");
         header("Emergency Patient Diagnosis Menu");
-        String name = Takestrinp("Enter the name of the patient: ");
-        String phoneno = takesphinp("Enter the phone no of the patient: ");
-        String addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
-        if (validatePatient(name, phoneno)) {
-            System.out.println("No such patient found");
+        String addmitno = Takestrinp("Enter patient admit number: ");
+        if(!EPatient_Registry.containsKey(addmitno)){
+            System.out.println("There is no such user");
             return;
         }
         Patient pat = EPatient_Registry.get(addmitno);
@@ -493,9 +713,7 @@ Hospital() throws NoSuchAlgorithmException {
             String yn1 = Takestrinp("-> ");
             if (yn1.trim().toLowerCase().equals("y")) {
                 System.out.println("Billing out patient: ");
-
                 EPatient_Registry.remove(addmitno);
-                Patient_Registry.put(addmitno, pat);
             } else {
                 System.out.println("Patient not billed out");
             }
@@ -524,7 +742,7 @@ Hospital() throws NoSuchAlgorithmException {
         if (refferenced) {
             printFloorPlan();
         }
-        for (int i = 1; i <= floorNo; i++) {
+        for (int i = Floorplan.size(); i <= floorNo; i++) {
             System.out.println("Floor Planner Menu for Floor " + i);
             do {
                 System.out.println("1. Add Rooms");
@@ -831,8 +1049,8 @@ Hospital() throws NoSuchAlgorithmException {
         do {
             System.out.print("\u000c");
             System.out.flush();
-            header("Admin Menu");
-            System.out.println("0. Emergency Functions");
+            header("Admin Menu ");
+            System.out.println("0. Emergency Admission");
             System.out.println("1. Patient Functions");
             System.out.println("2. Management and Infrastructure");
             System.out.println("3. Financials");
@@ -846,7 +1064,7 @@ Hospital() throws NoSuchAlgorithmException {
             switch (n) {
                 case 0:
                     System.out.println("\u000c");
-                    EmergencyMenu();
+                    EmergencyAdmission();
                     break;
                 case 1:
                     System.out.println("\u000c");
@@ -875,6 +1093,9 @@ Hospital() throws NoSuchAlgorithmException {
                     for (String patid : Patient_Registry.keySet()) {
                         Pat_reg.add(Patient_Registry.get(patid));
                     }
+                    for(String patid : EPatient_Registry.keySet()){
+                        Pat_reg.add(EPatient_Registry.get(patid));
+                    }
                     ArrayList<Staff> staff_reg = new ArrayList<>();
                     for (String staffid : Staff_Registry.keySet()) {
                         staff_reg.add(Staff_Registry.get(staffid));
@@ -887,6 +1108,10 @@ Hospital() throws NoSuchAlgorithmException {
                     printDocChart();
                     String docid = Takestrinp("Enter the doc id: ");
                     Doctor docdata = Doctor_Registry.get(docid);
+                    if(docdata == null){
+                        System.out.println("No such doctor found");
+                        return;
+                    }
                     docdata.Login();
                     break;
                 case 7:
@@ -925,231 +1150,6 @@ Hospital() throws NoSuchAlgorithmException {
 
         }
         while (n != 9);
-    }
-    private void EmergencyMenu() {
-        int n = 0;
-        do {
-            System.out.print("\u000c");
-            System.out.flush();
-            header(" Emergency Patient Functions ");
-            System.out.println("1. Emergency Admission");
-            System.out.println("2. Emergency Patient Diagnosis");
-            System.out.println("3. Emergency show all patients");
-            System.out.println("4. Emergency Bill Out Patient");
-            System.out.println("5. Shift Patient from Emergency to Normal");
-            System.out.println("6. Change patient bed");
-            System.out.println("7. Transfer Patient to another hospital");
-            System.out.println("8. Exit");
-            n = Takeintinp("-> ");
-            switch (n) {
-                case 1:
-                    EmergencyAdmission();
-                    break;
-                case 2:
-                    EmergencyPatientDiagnosis();
-                    break;
-                case 3:
-                    System.out.println("\u000c");
-                    System.out.println("Patient details");
-                    for(int i = 1;i<=200;i++){
-                        System.out.print("-");
-                    }
-                    for (Patient pat : EPatient_Registry.values()) {
-                        pat.printPatientDetails();
-                    }
-                    for(int i = 1;i<=200;i++){
-                        System.out.print("-");
-                    }
-                    break;
-                case 4:
-                    System.out.println("\u000c");
-                    System.out.println("Billing out patient: ");
-                    for(int i = 1;i<=200;i++){
-                        System.out.print("-");
-                    }
-                    for (Patient pat : EPatient_Registry.values()) {
-                        pat.printPatientDetails();
-                    }
-                    for(int i = 1;i<=200;i++){
-                        System.out.print("-");
-                    }
-                    String name = Takestrinp("Enter the name of the patient: ");
-                    String phoneno = takesphinp("Enter the phone no of the patient: ");
-                    String addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
-                    if (validatePatient(name, phoneno)) {
-                        System.out.println("No such patient found");
-                        return;
-                    }
-                    Patient pat = EPatient_Registry.get(addmitno);
-                    System.out.println("Billing out patient: " + pat.patientdata.get(0));
-                    System.out.println("Do you want to bill out the patient Y/N: ");
-                    String yn = Takestrinp("-> ");
-                    if (yn.trim().toLowerCase().equals("y")) {
-                        pat.Billoutpatient();
-                        financials.addIncome(String.valueOf("Doctors visit by" + pat.addmitno), pat.getBill(), (pat.getBill() - pat.getHospitalCost()), true);
-                    } else {
-                        System.out.println("Patient not billed out");
-                    }
-                    break;
-                case 5:
-                    System.out.println("\u000c");
-                    System.out.println("Shifting patient from emergency to normal: ");
-                    for(int i =0;i<200;i++){
-                        System.out.print("-");
-                    }
-                    System.out.println();
-                    for (Patient pat5 : EPatient_Registry.values()) {
-                        pat5.printPatientDetails();
-                    }
-                    for(int i =0;i<200;i++){
-                        System.out.print("-");
-                    }
-                    System.out.println();
-                    String name1 = Takestrinp("Enter the name of the patient: ");
-                    String phoneno1 = takesphinp("Enter the phone no of the patient: ");
-                    String addmitno1 = name1.substring(0).trim() + "_" + phoneno1.substring(6, 9).trim();
-                    if (validatePatient(name1, phoneno1)) {
-                        System.out.println("No such patient found");
-                        return;
-                    }
-                    Patient pat1 = EPatient_Registry.get(addmitno1);
-                    System.out.println("Shifting patient from emergency to normal: " + pat1.patientdata.get(0));
-                    System.out.println("Do you want to shift the patient Y/N: ");
-                    String yn1 = Takestrinp("-> ");
-                    if (yn1.trim().toLowerCase().equals("y")) {
-                        System.out.println("Assigning doctor");
-                        printDocChart();
-                        String docid = Takestrinp("Enter the doctor id: ");
-                        if (!Doctor_Registry.containsKey(docid)) {
-                            System.out.println("Doctor not found");
-                            return;
-                        }
-                        pat1.patientdata.set(2, docid);
-                        ScheduleAppointment("Emergency", pat1, docid);
-                        EPatient_Registry.remove(addmitno1);
-                        Patient_Registry.put(addmitno1, pat1);
-                    } else {
-                        System.out.println("Patient not shifted");
-                    }
-                    break;
-                case 6:
-                    System.out.println("\u000c");
-                    System.out.println("Changing patient bed: ");
-                    for(int i =0;i<200;i++){
-                        System.out.print("-");
-                    }
-                    System.out.println();
-                    for (Patient pat8 : EPatient_Registry.values()) {
-                        pat8.printPatientDetails();
-                    }
-                    for(int i =0;i<200;i++){
-                        System.out.print("-");
-                    }
-                    System.out.println();
-                    name = Takestrinp("Enter the name of the patient: ");
-                    phoneno = takesphinp("Enter the phone no of the patient: ");
-                    addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
-                    if (validatePatient(name, phoneno)) {
-                        System.out.println("No such patient found");
-                        return;
-                    }
-                    pat = EPatient_Registry.get(addmitno);
-                    if(pat.bedid == null){
-                        System.out.println("Patient is not in bed, cannot change bed");
-                        return;
-                    }
-                    System.out.println("Changing patient bed: " + pat.patientdata.get(0));
-                    System.out.println("Do you want to change the patient bed Y/N: ");
-                    yn = Takestrinp("-> ");
-                    if (yn.trim().toLowerCase().equals("y")) {
-                        System.out.println("Assigning bed");
-                        printFreeBeds();
-                        String bedid = Takestrinp("Enter the bed id: ");
-                        if (!bedid.contains("bed")) {
-                            System.out.println("Invalid bed id");
-                            return;
-                        }
-                          String roomid = bedid.split("_")[0];
-                        roomid = roomid.substring(0,roomid.length()-1);
-                        String bedtype = bedid.split("_")[2];
-                        bedtype = bedtype.substring(1,bedtype.length()-1);
-
-
-                        Rooms room = null;
-                        for (String floorKey : Floorplan.keySet()) {
-                            ArrayList<Rooms> roomsOnFloor = Floorplan.get(floorKey);
-                            for (Rooms room1 : roomsOnFloor) {
-                                if (room1.roomid.equals(roomid)) {
-                                    room = room1;
-                                    break;
-                                }
-                            }
-                        }
-                        if (room == null) {
-                            System.out.println("Room not found");
-                            return;
-                        }
-                        Beds bed = room.Bedsinroom.get(bedtype);
-                        if (bed == null) {
-                            System.out.println("Bed not found");
-                            return;
-                        }
-                        if (bed.occupant != null) {
-                            System.out.println("Bed already occupied");
-                            return;
-                        }
-                        pat.TransferBed(bedid,bed);
-                    } else {
-                        System.out.println("Patient bed not changed");
-                    }
-                    break;
-                case 7:
-                    System.out.println("\u000c");
-                    System.out.println("Transfering patient to another hospital: ");
-                    System.out.println("%-200-");
-                    for (Patient pat9 : EPatient_Registry.values()) {
-                        pat9.printPatientDetails();
-                    }
-                    System.out.println("%-200-");
-                    name = Takestrinp("Enter the name of the patient: ");
-                    phoneno = takesphinp("Enter the phone no of the patient: ");
-                    addmitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
-                    if (validatePatient(name, phoneno)) {
-                        System.out.println("No such patient found");
-                        return;
-                    }
-                    pat = EPatient_Registry.get(addmitno);
-                    System.out.println("Transfering patient to another hospital: " + pat.patientdata.get(0));
-                    System.out.println("Do you want to transfer the patient Y/N: ");
-                    yn = Takestrinp("-> ");
-                    if (yn.trim().toLowerCase().equals("y")) {
-                        System.out.println("Do you want to immedietly bill out patient Y/N: ");
-                        String yn4 = Takestrinp("-> ");
-                        if (yn4.trim().toLowerCase().equals("y")) {
-                            System.out.println("Billing out patient: ");
-                            pat.Billoutpatient();
-                            financials.addIncome(String.valueOf("Doctors visit by" + pat.addmitno), pat.getBill(), (pat.getBill() - pat.getHospitalCost()), true);
-                        } else {
-                            System.out.println("Patient not billed out");
-                        }
-                        pat.printPatientDetails();
-                        pat.printMedicalHistory();
-                        EPatient_Registry.remove(addmitno);
-                    } else {
-                        System.out.println("Patient not transferred");
-                    }
-
-                    break;
-                case 8:
-                    return;
-                default:
-                    System.out.println("Enter a number between 1-8");
-
-            }
-
-        }
-        while (n != 8);
-
     }
     private void FinancialsMenu() {
         System.out.println("\u000c");
@@ -1254,6 +1254,7 @@ Hospital() throws NoSuchAlgorithmException {
                     for (Doctor doc : Doctor_Registry.values()) {
                         doc.printData();
                     }
+                    System.out.println();
                     break;
                 case 4:
                     for (Staff staff : Staff_Registry.values()) {
@@ -1298,6 +1299,7 @@ Hospital() throws NoSuchAlgorithmException {
 
                     } else {
                         System.out.println("Doctor not found with ID: " + doctorId);
+
                     }
                     break;
                 case 8:
@@ -1333,7 +1335,7 @@ Hospital() throws NoSuchAlgorithmException {
                         doc.printData();
                     }
                     System.out.println();
-                    PrintSchedule(Takestrinp("Enter the doctor id: "));
+                    PrintSchedule(Takestrinp("Enter the docid: "));
                     PrintDocPatients();
                     break;
                 case 12:
@@ -1474,9 +1476,8 @@ Hospital() throws NoSuchAlgorithmException {
         for (Doctor doc : Doctor_Registry.values()) {
             doc.printData();
         }
-        System.out.print("Enter Doctor ID to modify: ");
-        String doctorId = scanner.nextLine();
-
+        System.out.println();
+        String doctorId = Takestrinp("Enter Doctor ID to modify: ");
         Doctor doctor = findDoctorById(doctorId);
 
         if (doctor != null) {
@@ -1491,9 +1492,7 @@ Hospital() throws NoSuchAlgorithmException {
                 System.out.println("5. Change Daily Appointment Limit");
                 System.out.println("6. Add Doctor off days");
                 System.out.println("0. Exit");
-                System.out.print("Enter your choice: ");
-                choice = scanner.nextInt();
-                scanner.nextLine(); // Consume the newline character left by nextInt()
+                choice = Takeintinp("->");// Consume the newline character left by nextInt()
 
                 switch (choice) {
                     case 1:
@@ -1554,12 +1553,18 @@ Hospital() throws NoSuchAlgorithmException {
                 return doctor;
             }
         }
+        for(Doctor doctor:EMT_Registry.values()){
+            if (doctor.doctorid.equals(doctorId)) {
+                return doctor;
+            }
+        }
         return null;
     }
     public void PatientMenu() {
+        String name,phoneno;
         System.out.print("\u000c");
         do {
-            System.out.println("Welcome to the Patient menu of " + clinic_managementSystem);
+            System.out.println("Welcome to the Patient menu of " + clinic_managementSystem+"(emergency cases to be controlled from emergency menu point 12)");
             System.out.println("1.Schedule Appointment");
             System.out.println("2.Remove Appointment");
             System.out.println("3.Show Patient Details");
@@ -1571,8 +1576,9 @@ Hospital() throws NoSuchAlgorithmException {
             System.out.println("9.Modify Patient Details");
             System.out.println("10.Show all Patients");
             System.out.println("11.Show appointments for a day/doctor for today ");
-            System.out.println("12.Add Bed charge for all patients");
-            System.out.println("13. Exit");
+            System.out.println("12.Modify emergency patients things");
+            System.out.println("13.Add Bed charge for all patients");
+            System.out.println("14. Exit");
             int x = Takeintinp("->");
             switch (x) {
                 case 1:
@@ -1587,13 +1593,6 @@ Hospital() throws NoSuchAlgorithmException {
                     for (Patient pat12 : Patient_Registry.values()) {
                         pat12.printPatientDetails();
                     }
-                    String name = Takestrinp("Enter the name of the patient: ");
-                    String phoneno = takesphinp("Enter the phone no of the patient: ");
-                    if (validatePatient(name, phoneno)) {
-                        System.out.println("No patient found");
-                        return;
-                    }
-                    Showpatientdetails(name, phoneno);
                     break;
                 case 4:
                     Removepat();
@@ -1628,13 +1627,20 @@ Hospital() throws NoSuchAlgorithmException {
                     for (Patient pat12 : Patient_Registry.values()) {
                         pat12.printPatientDetails();
                     }
-                    name = Takestrinp("Enter the name of the patient: ");
-                    phoneno = takesphinp("Enter the phone no of the patient: ");
-                    if (validatePatient(name, phoneno)) {
-                        System.out.println("No patient found");
-                        break;
+                     admitno = Takestrinp("Enter  the admit no: ");
+                    if(!Patient_Registry.containsKey(admitno)){
+                        if(!EPatient_Registry.containsKey(admitno)){
+                            System.out.println("There is no such patient");
+                            return;
+                        }
                     }
-                    pat = Patient_Registry.get(name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim());
+                    pat = null;
+                    if(Patient_Registry.containsKey(admitno)){
+                        pat = Patient_Registry.get(admitno);
+                    }
+                    if(EPatient_Registry.containsKey(admitno)){
+                        pat = EPatient_Registry.get(admitno);
+                    }
                     System.out.println("Billing out patient: " + pat.patientdata.get(0));
                     System.out.println("Do you want to bill out the patient Y/N: ");
                     String yn = Takestrinp("-> ");
@@ -1652,6 +1658,9 @@ Hospital() throws NoSuchAlgorithmException {
                     for (Patient pat12 : Patient_Registry.values()) {
                         pat12.printPatientDetails();
                     }
+                    for(Patient pat14:EPatient_Registry.values()){
+                        pat14.printPatientDetails();
+                    }
                     name = Takestrinp("Enter the name of the patient: ");
                     phoneno = takesphinp("Enter the phone no of the patient: ");
                     if (validatePatient(name, phoneno)) {
@@ -1664,11 +1673,16 @@ Hospital() throws NoSuchAlgorithmException {
                 case 10:
                     System.out.println("\u000c");
                     System.out.println("Patient List");
+                    printPatientDataHeader();
+                    System.out.println();
                     for (Patient pat12 : Patient_Registry.values()) {
                         pat12.printPatientDetails();
                     }
+                    for(Patient pat13: EPatient_Registry.values()){
+                        pat13.printPatientDetails();
+                    }
                     break;
-                case 12:
+                case 13:
                     System.out.println("\u000c");
                     for (ArrayList<Rooms> room : Floorplan.values()) {
                         for (Rooms rooms : room) {
@@ -1724,8 +1738,11 @@ Hospital() throws NoSuchAlgorithmException {
                     }
                     break;
 
-                case 13:
+                case 14:
                     return;
+                case 12:
+
+
                 default:
                     System.out.println("Enter a number");
 
@@ -1898,7 +1915,17 @@ Hospital() throws NoSuchAlgorithmException {
         }
     private void Showpatientdetails (String name, String phoneno){
         String admitno = name.substring(0).trim() + "_" + phoneno.substring(6, 9).trim();
-            Patient pat = Patient_Registry.get(admitno);
+        Patient pat = null;
+        if(!Patient_Registry.containsKey(admitno)&&!EPatient_Registry.containsKey(admitno)){
+            System.out.println("No patient found");
+            return;
+        }
+            if(Patient_Registry.containsKey(admitno)){
+                pat = Patient_Registry.get(admitno);
+            }
+        if(EPatient_Registry.containsKey(admitno)){
+            pat = Patient_Registry.get(admitno);
+        }
             if (pat != null) {
                 pat.printPatientDetails();
             } else {
