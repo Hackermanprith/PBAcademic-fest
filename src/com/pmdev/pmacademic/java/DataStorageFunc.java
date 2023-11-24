@@ -585,7 +585,6 @@ class DataLoader {
                                 patient.isEmergency = Boolean.parseBoolean(value);
                                 break;
                             case "Medical History":
-                                // Assuming Medical History is stored in a HashMap<String, ArrayList<String>>
                                 HashMap<String, ArrayList<String>> medicalHistory = new HashMap<>();
                                 while (!(line = reader.readLine()).equals("")) {
                                     String date = line.split(", Diagnosis: ")[0].substring(7);
@@ -598,7 +597,6 @@ class DataLoader {
                                 patient.MedicalHistory = medicalHistory;
                                 break;
                             case "Billable Services":
-                                // Assuming Billable Services is stored in a HashMap<String, Integer>
                                 HashMap<String, Integer> billableServices = new HashMap<>();
                                 while (!(line = reader.readLine()).equals("")) {
                                     String service = line.split(", Cost: ")[0].substring(8);
@@ -608,7 +606,7 @@ class DataLoader {
                                 patient.billable_services = billableServices;
                                 break;
                             case "Upcoming Appointments":
-                                // Assuming Upcoming Appointments is stored in a HashMap<String, String>
+
                                 HashMap<String, String> upcomingAppointments = new HashMap<>();
                                 while (!(line = reader.readLine()).equals("")) {
                                     String date = line.split(", Doctor: ")[0].substring(7);
@@ -618,7 +616,6 @@ class DataLoader {
                                 patient.UpcomingAppointments = upcomingAppointments;
                                 break;
                             case "Hospital Expenses":
-                                // Assuming Hospital Expenses is stored in a HashMap<String, Integer>
                                 HashMap<String, Integer> hospitalExpenses = new HashMap<>();
                                 while (!(line = reader.readLine()).equals("")) {
                                     String expense = line.split(", Cost: ")[0].substring(8);
@@ -627,7 +624,6 @@ class DataLoader {
                                 }
                                 patient.HospitalExpenses = hospitalExpenses;
                                 break;
-                            // Add more cases for other attributes...
                         }
                     }
                 }
