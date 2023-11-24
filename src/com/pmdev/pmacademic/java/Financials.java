@@ -1,8 +1,6 @@
 package com.pmdev.pmacademic.java;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 ///7003360256, 7044783478
 import static com.pmdev.pmacademic.java.Hospital.Takestrinp;
 
@@ -65,17 +63,17 @@ public class Financials {
             System.out.println("-----------------------------------------------------------------------");
             System.out.printf("| %-20s | %-20s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
             System.out.println("------------------------------------------------------------");
-            ArrayList<String> forlataer = new ArrayList<>();
+            ArrayList<ArrayList<String>> forlataer = new ArrayList<>();
             // Display Income
             for (String incomeName : Ins.keySet()) {
                 ArrayList<String> incomeData = Ins.get(incomeName);
                 if(incomeData.get(0).length() > 14){
-                    forlataer.add(incomeName);
+                    forlataer.add(incomeData);
                     continue;
                 }
                 System.out.printf("| %-20s | %-20s | %-15s | %-15s |\n", incomeName, incomeData.get(0), incomeData.get(2), incomeData.get(1));
             }
-            for(String i : forlataer){
+            for(ArrayList<String> i : forlataer){
                 ArrayList<String> incomeData = Ins.get(i);
                 System.out.printf("| %-30s | %-30s | %-30s | %-30s |\n", i, incomeData.get(0), incomeData.get(2), incomeData.get(1));
             }
