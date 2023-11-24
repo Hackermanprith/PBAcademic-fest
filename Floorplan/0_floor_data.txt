@@ -1,0 +1,66 @@
+Room ID: F0_R1_TDELUXE
+Room Type: DELUXE
+Room Side Capacity: 12
+Beds in Room:
+  Bed ID: 1_VIP_8
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_11
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_9
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_12
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_4
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_5
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_6
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_7
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_10
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_1
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_2
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+  Bed ID: 1_VIP_3
+  Bed Type: VIP
+  Bed Cost: 1200
+  Occupant: null
+-------------------------
+
+===

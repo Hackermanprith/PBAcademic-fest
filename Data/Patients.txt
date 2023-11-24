@@ -1,0 +1,32 @@
+Admission No: SOUMIL DEY_150
+Admission Date: 30/11/2023-shift2
+Name: SOUMIL DEY
+Phone No: 9123641507
+Address: KALIPUT
+Email: SMU89@gmail.com
+Guardian: none
+Guardian Phone No: none
+Bed ID: null
+Is Emergency: false
+Medical History:
+Billable Services:
+Upcoming Appointments:
+Hospital Expenses:
+
+===
+Admission No: Prithwish_789
+Admission Date: 11/11/2023-shift1
+Name: Prithwish
+Phone No: 1234567891
+Address: none
+Email: none
+Guardian: none
+Guardian Phone No: none
+Bed ID: null
+Is Emergency: false
+Medical History:
+	Date: OLD, Diagnosis: Billable Services:
+Upcoming Appointments:
+Hospital Expenses:
+
+===

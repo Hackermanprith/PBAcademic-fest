@@ -1,0 +1,13 @@
+Doctor ID: PRASH MUKHERJEE_150
+Name: PRASH MUKHERJEE
+Specialty: CARDIO
+Emergency Number: 9830258916
+Per Patient Charge: 1000.0
+Clinic Share: 400.0
+Amount Earned: 1200.0
+isEMT: false
+Timings:
+Off Days:
+Patient Registry:
+
+===
