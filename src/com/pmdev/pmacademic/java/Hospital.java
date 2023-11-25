@@ -1110,7 +1110,7 @@ Hospital() throws NoSuchAlgorithmException {
                     Doctor docdata = Doctor_Registry.get(docid);
                     if(docdata == null){
                         System.out.println("No such doctor found");
-                        return;
+                        break;
                     }
                     docdata.Login();
                     break;
