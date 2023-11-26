@@ -38,7 +38,7 @@ public class Hospital {
         System.out.println("===========================");
     }
 
-Hospital() throws NoSuchAlgorithmException {
+    Hospital() throws NoSuchAlgorithmException {
         databaseE = new Databasedb();
         databaseE.loadUserData();
         Patient_Registry = new HashMap<>();
@@ -1741,8 +1741,8 @@ Hospital() throws NoSuchAlgorithmException {
                 case 14:
                     return;
                 case 12:
-
-
+                    EmergencyMenu();
+                    break;
                 default:
                     System.out.println("Enter a number");
 
