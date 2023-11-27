@@ -89,7 +89,7 @@ public class Hospital {
                 }
                 Patient_Registry.put(patient.addmitno, patient);
             }
-            ArrayList<Staff>staff = dll.importAllStaffs();
+            ArrayList<Staff>staff = dll.importAllStaff();
             for(Staff staffu : staff){
                 Staff_Registry.put(staffu.staffid,staffu);
             }

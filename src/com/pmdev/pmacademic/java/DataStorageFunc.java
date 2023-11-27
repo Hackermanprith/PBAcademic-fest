@@ -635,6 +635,80 @@ class DataLoader {
 
         return patients;
     }
+    public static ArrayList<Staff> importAllStaff() {
+        ArrayList<Staff> importedStaffList = new ArrayList<>();
+        Staff currentStaff = new Staff();
+
+        try {
+            // Specify the file path for the exported staff data
+            String filename = "Data" + File.separator + "all_staff_data.txt";
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.equals("===")) {
+                        // If a separator is encountered, add the current staff to the list
+                        if (currentStaff.staffid != null) {
+                            importedStaffList.add(currentStaff);
+                        }
+                        currentStaff = new Staff();
+                    } else {
+                        // Split the line into key and value, then decrypt the value
+                        String[] parts = line.split(": ");
+                        if (parts.length == 2) {
+                            String key = parts[0];
+                            String value = decrypt(parts[1], generateSecretKey());
+
+                            // Set the decrypted value to the corresponding field in the current staff object
+                            switch (key) {
+                                case "ID":
+                                    currentStaff.staffid = value;
+                                    break;
+                                case "Name":
+                                    currentStaff.staffname = value;
+                                    break;
+                                case "Phone Number":
+                                    currentStaff.staffphno = value;
+                                    break;
+                                case "Designation":
+                                    currentStaff.staffdesignation = value;
+                                    break;
+                                case "Salary":
+                                    currentStaff.staffsalary = Double.parseDouble(value);
+                                    break;
+                                case "Additional Data":
+                                    ArrayList<String> staffData = new ArrayList<>();
+                                    while (!(line = reader.readLine()).equals("")) {
+                                        staffData.add(value);
+                                    }
+                                    currentStaff.staffdata = staffData;
+                                    break;
+                                default:
+                                    // Handle additional fields as needed
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                // Add the last staff entry if not added already
+                if (currentStaff.staffid != null) {
+                    importedStaffList.add(currentStaff);
+                }
+
+                System.out.println("All staff data imported successfully from " + filename);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Error importing all staff data from " + filename);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error importing all staff data.");
+        }
+
+        return importedStaffList;
+    }
+
     public static HashMap<String, ArrayList<String>> decryptHmapExpenses() {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
         try {
@@ -679,32 +753,6 @@ class DataLoader {
             e.printStackTrace();
         }
         return data;
-    }
-    public static ArrayList<Staff> importAllStaffs() {
-        ArrayList<Staff> staffs = new ArrayList<>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("Data"+File.separator+"all_staff_data.txt"));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length == 2) {
-                    String key = parts[0];
-                    String[] values = parts[1].split("\\|");
-                    ArrayList<String> decryptedValues = new ArrayList<>();
-                    for (String value : values) {
-                        decryptedValues.add(decrypt(value, generateSecretKey()));
-                    }
-                    Staff staff = new Staff();
-                    staff.staffid = decryptedValues.get(0);
-                    staff.staffname = decryptedValues.get(1);
-                    staff.staffsalary = Double.parseDouble(decryptedValues.get(2));
-                    staffs.add(staff);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return staffs;
     }
     public static HashMap<String, ArrayList<Rooms>> importFloorplanData(String importDirectory) {
         HashMap<String, ArrayList<Rooms>> floorplan = new HashMap<>();

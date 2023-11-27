@@ -1,6 +1,0 @@
-Room ID: 1_Chamber_577
-Room Type: chamber
-Room Side Capacity: 12
-Beds in Room:
-
-===

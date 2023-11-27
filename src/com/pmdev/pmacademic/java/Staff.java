@@ -24,13 +24,17 @@ public class Staff {
     }
 
     public Staff() {
-
+        this.staffid = null;
+        this.staffdata = new ArrayList<>();
     }
 
     public void printData() {
         System.out.println("Staff Details:");
         System.out.printf("%-15s | %-25s |%-15s | %-20s |%-15s  |\n", "ID", "Name", "Phone Number", "Designation", "Salary");
-        System.out.println("------------------------------------------------------------------");
+        for(int i = 0;i<120;i++){
+            System.out.print("-");
+        }
+        System.out.println();
         System.out.printf("%-15s%-25s%-15s%-20s%-15.2f%n", staffid, staffname, staffphno, staffdesignation, staffsalary);
 
         // Print additional staff data from ArrayList in a table
