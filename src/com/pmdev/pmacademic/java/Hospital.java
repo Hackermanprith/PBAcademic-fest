@@ -37,7 +37,6 @@ public class Hospital {
                 "Admission No", "Admission Date", "Name", "Phone No", "Address", "Email", "Guardian", "Guardian Phone No", "Bed ID", "Is Emergency");
         System.out.println("===========================");
     }
-
     Hospital() throws NoSuchAlgorithmException {
         databaseE = new Databasedb();
         databaseE.loadUserData();
@@ -1745,8 +1744,6 @@ public class Hospital {
                     break;
                 default:
                     System.out.println("Enter a number");
-
-
             }
         }while (true) ;
     }
@@ -2082,7 +2079,6 @@ public class Hospital {
                 }
             } while (true);
         }
-    // Add the corresponding methods for the new cases based on your requirements
     public void removeRoom(int floorNo) {
         String roomId = Takestrinp("Enter the ID of the room to remove: ");
         ArrayList<Rooms> floorRooms = Floorplan.get(String.valueOf(floorNo));
@@ -2201,5 +2197,4 @@ public class Hospital {
             System.out.println("Floor " + floorNo + " not found.");
         }
     }
-
 }

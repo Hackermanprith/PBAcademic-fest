@@ -81,13 +81,8 @@ class   Beds{
         this.bedtype = bedtype;
         this.bed_cost = price;
     }
-
     public Beds() {
 
-    }
-
-    public void changeOccupant(String newOccupant) {
-        this.occupant = newOccupant;
     }
     public void changeBedType(String newBedType) {
         this.bedtype = newBedType;

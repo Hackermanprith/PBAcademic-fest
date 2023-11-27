@@ -398,7 +398,6 @@ class DataExporter {
 
     }
 }
-
 class DataLoader {
 
     static SecretKey generateSecretKey() {
@@ -406,12 +405,10 @@ class DataLoader {
         byte[] keyBytes = secretKeyString.getBytes();
         return new SecretKeySpec(keyBytes, "AES");
     }
-
     static String decrypt(String encryptedData, SecretKey secretKey) throws Exception {
         // Convert the decrypted byte array to a string
         return encryptedData;
     }
-
     public static ArrayList<Doctor> importAllDoctorsData(String filename, SecretKey secretKey) {
         ArrayList<Doctor> importedDoctors = new ArrayList<>();
         Doctor currentDoctor = new Doctor();
@@ -510,7 +507,6 @@ class DataLoader {
 
         return importedDoctors;
     }
-
     public static ArrayList<Patient> importAllPatients(String filename) {
         ArrayList<Patient> patients = new ArrayList<>();
 
@@ -639,7 +635,6 @@ class DataLoader {
 
         return patients;
     }
-
     public static HashMap<String, ArrayList<String>> decryptHmapExpenses() {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
         try {
@@ -662,7 +657,6 @@ class DataLoader {
         }
         return data;
     }
-
     public static HashMap<String, ArrayList<String>> decryptHmapIncome() {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
 
@@ -782,8 +776,6 @@ class DataLoader {
 
         return rooms;
     }
-
-
     public void saveClinicName(String clinicManagementSystem) {
         try {
             File directory = new File("Data");
@@ -819,7 +811,6 @@ class DataLoader {
         }
         return null;
     }
-
     public Map<String, ArrayList<String>> importDoctorSchedules(String doctorSchedules) {
         Map<String, ArrayList<String>> schedules = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("Data"+File.separator+doctorSchedules))) {
@@ -847,10 +838,7 @@ class DataLoader {
         }
         return schedules;
     }
-
 }
-
-
 class Databasedb {
     public static final String DATABASE_FILE = "saltedUserDatabase.txt";
     public static final int SALT_LENGTH = 16; // Length of the salt in bytes

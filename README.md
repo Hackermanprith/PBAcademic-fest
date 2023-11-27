@@ -1,5 +1,5 @@
 
-# Clinic Managemenr System
+# Clinic Management System
 The Clinic Management System is a comprehensive software project designed to streamline and enhance various aspects of medical facility operations. The system focuses on efficient storage and utilization of patient data, financial operations, staff and doctor management, data exportation, and emergency handling. It is built with a strong emphasis on backward compatibility, ensuring seamless integration with existing systems and easy adaptation to evolving technological landscapes.
 
 Key Features:

@@ -41,7 +41,6 @@ public class Financials {
         data.add(1, String.valueOf(cost));
         Ins.put(serviceName+"_"+n, data);
     }
-
     public void addExpense(String serviceName, double cost) {
         Random rand = new Random();
         int n = rand.nextInt(9999);
@@ -51,14 +50,14 @@ public class Financials {
 
         Expenses.put(serviceName+"_"+n, data);
     }
-
-        public void showFinancials() {
+    public void showFinancials() {
             showIncomes();
             System.out.println();
             showExpense();
             System.out.println();
         }
         public void showIncomes(){
+
             System.out.println("\u000c");
             System.out.println("-----------------------------------------------------------------------");
             System.out.printf("| %-20s | %-20s | %-15s | %-15s |\n", "ID", "Service Name", "Cost Incurred", "Amount Gained");
@@ -145,7 +144,6 @@ public class Financials {
         }while(n!=0);
 
     }
-
     public void modfiyExpense() {
         showExpense();
         String serviceId = Takestrinp("Enter the service ID: ");

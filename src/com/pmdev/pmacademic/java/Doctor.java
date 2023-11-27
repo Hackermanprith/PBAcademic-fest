@@ -44,7 +44,6 @@ public class Doctor {
         this.isMedicOnStandby = isMedicOnStandby;
 
     }
-
     public Doctor() {
         data = new ArrayList<>();
         this.timings = new HashMap<>();
@@ -52,7 +51,6 @@ public class Doctor {
         Patient_Registry = new HashMap<>();
 
     }
-
     public void AddPatientToSchedule(String date,Patient patient) {
         try {
             if (Patient_Registry.containsKey(date) && Patient_Registry.get(date).size() < doctordailyLimit) {
@@ -73,8 +71,6 @@ public class Doctor {
         } catch (Exception e) {
         }
     }
-
-
     public void RemovePatientReg(String date,Patient patient){
         if(Patient_Registry.containsKey(date)){
             Patient_Registry.get(date).remove(patient);
@@ -84,7 +80,6 @@ public class Doctor {
             System.out.println("Doctor is not available on this day");
         }
     }
-
     public void printData() {
         // Print Doctor Details in a table-like format
         for(int i = 0;i<120;i++){
@@ -104,7 +99,6 @@ public class Doctor {
             System.out.print("-");
         }
     }
-
     public void setOffdays(String offday){
         this.offdays.add(offday);
     }
