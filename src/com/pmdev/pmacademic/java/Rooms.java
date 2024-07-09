@@ -7,7 +7,7 @@ class Rooms{
     String roomtype;
     int roomsidecapacity = 10;
     public HashMap<String, Beds> Bedsinroom;
-
+    public Rooms(){}
     public static int Takeintinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
