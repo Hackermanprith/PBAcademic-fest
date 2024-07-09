@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.print.Doc;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignedObject;
@@ -51,9 +53,13 @@ public class Hospital {
         financials = new Financials();
         dll = new DataLoader();
         dex = new DataExporter();
+        if(!Files.exists(Paths.get("Data"))){
+            File file = new File("Data");
+            file.mkdir();
+        }
         String str = Takestrinp("Do you want to load from previous session: ");
-        if (str.trim().toLowerCase().equals("y")&& Files.exists(Paths.get("Data"+ File.separator+"all_doctors_data.txt"))){
-            header("Log in");
+        if (str.trim().toLowerCase().equals("y")){
+            header("Log in ");
             String username = Takestrinp("Enter the admin username: ");
             String password = Takestrinp("Enter the password: ");
             if (databaseE.loginUser(username, password)) {
@@ -91,6 +97,9 @@ public class Hospital {
             }
             ArrayList<Staff>staff = dll.importAllStaff();
             for(Staff staffu : staff){
+                if(staffu.staffid == null){
+                    continue;
+                }
                 Staff_Registry.put(staffu.staffid,staffu);
             }
             financials.Ins = dll.decryptHmapIncome();

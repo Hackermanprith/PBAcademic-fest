@@ -1,12 +1,16 @@
-Doctor ID: PRASH MUKHERJEE_150
-Name: PRASH MUKHERJEE
-Specialty: CARDIO
-Emergency Number: 9830258916
-Per Patient Charge: 1000.0
-Clinic Share: 400.0
-Amount Earned: 1200.0
+Doctor ID: Prithwish Lal_924
+Name: Prithwish Lal
+Specialty: optics
+Emergency Number: 8274979243
+Per Patient Charge: 1.2E7
+Clinic Share: 1200.0
+Amount Earned: 0.0
 isEMT: false
 Timings:
+0: 0,0
+2: 0,0
+4: 0,0
+6: 10:30-11:30,1:30-7:30
 Off Days:
 Patient Registry:
 
