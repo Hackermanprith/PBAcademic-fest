@@ -1,16 +1,16 @@
-Doctor ID: Prithwish Lal_924
-Name: Prithwish Lal
-Specialty: optics
-Emergency Number: 8274979243
-Per Patient Charge: 1.2E7
-Clinic Share: 1200.0
+Doctor ID: SREEHIT_086
+Name: SREEHIT
+Specialty: RANDOM
+Emergency Number: 9230090860
+Per Patient Charge: 1200.0
+Clinic Share: 100.0
 Amount Earned: 0.0
-isEMT: false
+isEMT: true
 Timings:
 0: 0,0
 2: 0,0
 4: 0,0
-6: 10:30-11:30,1:30-7:30
+6: 1:30-2:30,0
 Off Days:
 Patient Registry:
 
