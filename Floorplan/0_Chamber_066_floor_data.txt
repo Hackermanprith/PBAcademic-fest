@@ -1,0 +1,6 @@
+Room ID: 0_Chamber_363
+Room Type: chamber
+Room Side Capacity: 1
+Beds in Room:
+
+===

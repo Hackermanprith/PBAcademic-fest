@@ -1,0 +1,6 @@
+Room ID: 0_Chamber_336
+Room Type: chamber
+Room Side Capacity: 122
+Beds in Room:
+
+===
