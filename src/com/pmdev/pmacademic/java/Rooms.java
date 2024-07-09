@@ -7,11 +7,7 @@ class Rooms{
     String roomtype;
     int roomsidecapacity = 10;
     public HashMap<String, Beds> Bedsinroom;
-
-    public Rooms() {
-
-    }
-
+    public Rooms(){}
     public static int Takeintinp(String msg) {
         System.out.print(msg);
         Scanner sc = new Scanner(System.in);
@@ -47,6 +43,8 @@ class Rooms{
     }
 
     public void printRoom() {
+        boolean roomFound = false;
+        roomFound = true;
         System.out.println("Room Details:");
         System.out.println("Room ID: " + this.roomid);
         System.out.println("Room Type: " + this.roomtype);
