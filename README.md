@@ -1,4 +1,5 @@
 # Hospital Management System
+I MADE THIS FOR MY SCHOOL PROJECT AND NOT SPECIFICALLY FOR ARCADE AS I JOINED ARCADE 5 DAYS AGO.
 #### Video Demo:  <URL HERE>
 #### Description:
 
